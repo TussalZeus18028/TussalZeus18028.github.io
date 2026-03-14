@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title itemprop="name">lukeewin的博客</title>
+<meta name="description" content="用于记录自己的学习成长"/>
+<meta name="keywords" content="Java,java学习笔记,日常笔记,java技术学习记录,python,ASR内网部署,TTS内网部署,语音识别"/>
+<meta name="generator" content="Halo 1.6.1"/>
+<link rel="shortcut icon" type="images/x-icon" href="https://blog.lukeewin.top/upload/2021/02/halo_blog_logo-70b78d68124d4257ba8a28ec25756da2.png">
+<link rel='stylesheet' href='https://blog.lukeewin.top/themes/LIlGG_Sakura/styles/style.min.css?ver=1.3.4' type='text/css' media='all'>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+SerifMerriweather|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700|Noto+Serif+SC&display=swap" media="noexist" onload="this.media='all'">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_2010950_sh9o0r7ahar.css" media="noexist" onload="this.media='all'">
+<link rel="stylesheet" href="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/css/lib.css" media="noexist" onload="this.media='all'">
+<link rel='stylesheet' href="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/css/highlight/highlight-Dracula.css" type="text/css" media="noexist" onload="this.media='all'">
+<link rel="stylesheet" href="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/APlayer/APlayer.min.css" media='all'>
+<link rel="stylesheet" href="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/jqcloud2/jqcloud.min.css" media="noexist" onload="this.media='all'">
+<link rel="stylesheet" href="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/justifiedGallery/justifiedGallery.min.css" media="noexist" onload="this.media='all'">
+<link rel="stylesheet" href="https://unpkg.com/katex@0.12.0/dist/katex.min.css" media="noexist" onload="this.media='all'"/>
+<style type="text/css">.site-top .lower nav{display:block !important;}.video-play,.loadvideo{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/play@32x32.png)}.video-pause{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/pause@32x32.png)}#video-add{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/add@32x32.png);}#loading-comments{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/disqus-preloader.svg);}.headertop.filter-grid:before{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/grid.png)}.headertop.filter-dot:before{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/dot.gif)}@media (max-width:860px){.headertop.filter-dot:before{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/grid.png)}}.search-form.is-visible{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/other/iloli.gif);}#pagination .loading,#journals-pagination .loading{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/rotating-ball-o.svg);}#banner_wave_1{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/wave1.png) repeat-x;}#banner_wave_2{background-image:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/wave2.png) repeat-x;}a{cursor:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/cursor/ayuda.cur),auto}a:active{cursor:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/cursor/work.cur),alias}p{cursor:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/cursor/texto.cur),auto}body{cursor:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/cursor/normal.cur),auto;}.cd-top{cursor:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/cursor/No_Disponible.cur),auto;}.botui-actions-buttons-button{cursor:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/cursor/No_Disponible.cur),auto;}.button.botui-actions-buttons-button{cursor:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/cursor/No_Disponible.cur),auto;}.highlight-wrap code{cursor:url(https://blog.lukeewin.top/themes/LIlGG_Sakura/source/cursor/texto.cur),auto}.cd-top{background:url(https://cdn.jsdelivr.net/gh/LIlGG/cdn@1.0.8/img/Sakura/images/scroll.png) no-repeat center;}.author-profile i,.post-like a,.post-share .show-share,.sub-text,.we-info a,span.sitename,.post-more i:hover,#pagination a:hover,.post-content a:hover,.float-content i:hover{color:#fe9600}.feature i,.feature-title span,.download,.navigator i:hover,.links ul li:before,.ar-time i,span.ar-circle,.object,.comment .comment-reply-link,.siren-checkbox-radio:checked + .siren-checkbox-radioInput:after{background:#fe9600}::-webkit-scrollbar-thumb{background:#fe9600}.download,.navigator i:hover,.link-title,.links ul li:hover,#pagination a:hover,.comment-respond input[type='submit']:hover{border-color:#fe9600}.entry-content a:hover,.site-info a:hover,.comment h4 a,#comments-navi a.prev,#comments-navi a.next,.comment h4 a:hover,.site-top ul li a:hover,.entry-title a:hover,#archives-temp h3,span.page-numbers.current,.sorry li a:hover,.site-title a:hover,i.iconfont.js-toggle-search.iconsearch:hover,.comment-respond input[type='submit']:hover{color:#fe9600}#nprogress .bar{background:#fe9600}#nprogress .peg{box-shadow:0 0 10px #fe9600,0 0 5px #fe9600;}#pagination a:hover{border:1px solid #fe9600;}#pagination a:hover{-webkit-box-shadow:0 0 4px #fe9600;-moz-box-shadow:0 0 4px #fe9600;-o-box-shadow:0 0 4px #fe9600;box-shadow:0 0 4px #fe9600}.entry-content a:after{background-color:#fe9600}.site-top ul li a:after{background-color:#fe9600}.post-tags a:hover{color:#fe9600}blockquote:before{color:#fe9600;}blockquote:after{color:#fe9600;}@media (max-width:860px){#mo-nav ul li a:hover{color:#fe9600;}}@media (min-width:860px){.chip-container{margin-top:-60px;;}}#gallery-filter{text-align:center;}.masonry-gallery .gallery-item{margin-bottom:10px}.journals-line>li:nth-child(odd) .journal-label:after{border-right-color:#e6e6fa;}.at_button{background-color:#e6e6fa;color:#000000;}.at_button:hover{background:#f0ffff;color:#000000;}.journals-line>li:nth-child(odd) .journal-label{background:#e6e6fa;color:#000000;}.journals-line>li .journal-label{background:#f0ffff;color:#000000;}body.dark .header-info,body.dark .top-social img{color:#fff;background:rgba(0,0,0,0.7);}body.dark .notification,body.dark .the-feature.from_left_and_right .info{background-color:rgba(0,0,0,0.7);}body.dark .skin-menu,body.dark .m-cd-top{background-color:rgba(0,0,0,0.7) !important;}body.dark img,body.dark .highlight-wrap,body.dark iframe,body.dark .entry-content .aplayer{filter:brightness(0.7);}body.dark .ar-time i,body.dark span.ar-circle,body.dark .scrollbar,body.dark .butterBar-message,body.dark .aplayer .aplayer-list ol li:hover{background:#fe9600 !important;}body.dark .aplayer .aplayer-list ol li.aplayer-list-light .aplayer-list-cur,body.dark .user-menu-option a:hover,body.dark .menu-list li:hover,body.dark .font-family-controls button:hover,body.dark .openNav .icon,body.dark .openNav .icon:before,body.dark .openNav .icon:after,body.dark .openNav .icon:after,body.dark .site-top ul li a:after{background-color:#fe9600;}body.dark #archives-temp h3,body.dark #moblieGoTop,body.dark #changskin,body.dark .the-feature.from_left_and_right a:hover .info p,body.dark .the-feature.from_left_and_right .info,body.dark .ins-section .ins-search-item:hover,body.dark .ins-section .ins-search-item:hover .ins-slug,body.dark .ins-section .ins-search-item:hover .ins-search-preview,body.dark .ins-section .ins-search-item:hover .iconfont,body.dark .float-content i:hover,body.dark .menhera-container .emoji-item:hover,body.dark .comment-respond .logged-in-as a:hover,body.dark .site-top ul li a:hover,body.dark i.iconfont.js-toggle-search.iconsearch:hover{color:#fe9600;}body.dark .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-icon:hover path{fill:#fe9600}body.dark #moblieGoTop:hover,body.dark #changskin:hover{color:#fe9600;opacity:.8;}body.dark .focusinfo .header-tou img{box-shadow:inset 0 0 10px #fe9600;}</style>  <style id="comment-style" type="text/css" media="noexist">.halo-comment.dark button,.halo-comment.dark input,.halo-comment.dark select,.halo-comment.dark textarea,.halo-comment.dark i.iconfont.js-toggle-search.iconsearch,.halo-comment.dark .comment-textarea .input-label,.halo-comment.dark #emotion-toggle span,.halo-comment.dark .emotion-box,.halo-comment.dark .emotion-box .motion-container .emoji-item{color:#eee !important;}.halo-comment.dark .body p{color:#bebebe !important;}.halo-comment.dark input[type=color]:focus,.halo-comment.dark input[type=date]:focus,.halo-comment.dark input[type=datetime-local]:focus,.halo-comment.dark input[type=datetime]:focus,.halo-comment.dark input[type=email]:focus,.halo-comment.dark input[type=month]:focus,.halo-comment.dark input[type=number]:focus,.halo-comment.dark input[type=password]:focus,.halo-comment.dark input[type=range]:focus,.halo-comment.dark input[type=search]:focus,.halo-comment.dark input[type=tel]:focus,.halo-comment.dark input[type=text]:focus,.halo-comment.dark input[type=time]:focus,.halo-comment.dark input[type=url]:focus,.halo-comment.dark input[type=week]:focus,.halo-comment.dark textarea:focus{color:#eee !important;background-color:#31363b !important;}.halo-comment.dark .comment .info,.halo-comment.dark .comment .comment-time,.halo-comment.dark .comment-respond .logged-in-as,.halo-comment.dark .notification,.halo-comment.dark .comment-respond .logged-in-as a{color:#9499a8;}.halo-comment.journal{max-height:600px;overflow:auto;}</style> <script type="text/javascript">if (!!window.ActiveXObject ||"ActiveXObject" in window) {alert('请抛弃万恶的IE系列浏览器吧。');}
+</script>
+</head>
+<body class="hfeed chinese-font serif">
+<section id="main-container">
+<div class="headertop filter-nothing">
+<figure id="centerbg" class="centerbg" style="background-image: url(
+		https://blog.lukeewin.top/upload/2022/07/index3.jpg
+	);
+">
+<div class="focusinfo">
+<h1 class="center-text glitch" data-text="Hi,Friend">Hi,Friend</h1>
+<div class="header-info no-select
+			 info-desc"><p><i class="fa fa-quote-left"></i><span class="desc">热爱生活，热爱程序</span><i class="fa fa-quote-right"></i></p>
+<div class="top-social_v2">
+<li id="bg-pre">
+<img class="flipx" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/next-b.svg">
+</li>
+<li class="wechat"><a href="#">
+<img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/wechat.png"/></a>
+<div class="wechatInner">
+<img src="https://blog.lukeewin.top/upload/2021/02/mmqrcode1614173853956-9d5f374e1425434ea485bf4a3684d34d.png" class="i18n" data-iname="icon_alt.wechat" data-iattr="alt">
+</div>
+</li>
+<li class="qq">
+<a href="//wpa.qq.com/msgrd?v=3&uin=2131672767&site=qq&menu=yes" target="_blank" class="i18n" data-iname="icon_alt.qq" data-iattr="title">
+<img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/qq.png"/>
+</a>
+</li>
+<li>
+<a href="https://github.com/lukeewin" target="_blank" class="social-github i18n" data-iname="icon_alt.github" data-iattr="title">
+<img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/github.png"/>
+</a>
+</li>
+<li>
+<a href="https://space.bilibili.com/674558378/" target="_blank" class="social-bili i18n" data-iname="icon_alt.bili" data-iattr="title">
+<img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/bilibili.png"/>
+</a>
+</li>
+<li>
+<a href="https://www.zhihu.com/people/lukeewin" target="_blank" class="i18n" data-iname="icon_alt.zhihu" data-iattr="title">
+<img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/zhihu.png"/>
+</a>
+</li>
+<li>
+<a href="https://blog.csdn.net/qq_43907505?spm=1000.2115.3001.5343" target="_blank" class="i18n" data-iname="icon_alt.csdn" data-iattr="title">
+<img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/csdn.png"/>
+</a>
+</li>
+<li>
+<a href="https://lukeewin.taobao.com/" target="_blank" title="淘宝店铺">
+<img src="https://blog.lukeewin.top/favicon.ico"/>
+</a>
+</li>
+<li id="bg-next">
+<img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/next-b.svg">
+</li>
+</div>
+</div>
+</div>
+</figure>
+<div class="headertop-down faa-float animated" onclick="headertop_down()">
+<span><i class="fa fa-chevron-down" aria-hidden="true"></i></span>
+</div>
+</div>
+<div id="page" class="site wrapper">
+<style></style> <header class="site-header  is-homepage" role="banner">
+<div class="site-top">
+<div class="site-branding">
+<div class="site-title">
+<a href="https://blog.lukeewin.top">
+<img src="https://blog.lukeewin.top/upload/2022/07/img20210227121809.png">
+</a>
+</div>
+</div>
+<div class="header-user-avatar">
+<img src="https://blog.lukeewin.top/upload/2021/02/1-4693a1586cbc45afb79a504abc400eab.jpg" width="30" height="30">
+<div class="header-user-menu">
+<div class="herder-user-name">
+<div class="herder-user-name-u">lukeewin</div>
+</div>
+</div>
+</div>
+<div class="searchbox"><i class="iconfont js-toggle-search iconsearch icon-search"></i></div>
+<div class="lower-cantiner">
+<div class="lower">
+<nav class="navbar">
+<ul id="menu-menu-1" class="menu">
+<li>
+<a href="/" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-fort-awesome faa-horizontal" aria-hidden="true"></i>
+首页
+</span>
+</a>
+</li>
+<li>
+<a href="#" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-list-ul faa-tada animation-hover" aria-hidden="true"></i>
+清单
+</span>
+</a>
+<ul class="sub-menu">
+<li>
+<a href="https://blog.lukeewin.top/categories" target="_self">
+<i class="fa fa-th-large" aria-hidden="true"></i>
+分类
+</a>
+<li>
+<li>
+<a href="https://blog.lukeewin.top/tags" target="_self">
+<i class="fa fa-tags faa-horizontal animated-hover" aria-hidden="true"></i>
+标签云
+</a>
+<li>
+</ul>
+</li>
+<li>
+<a href="/archives" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-archive faa-shake" aria-hidden="true"></i>
+文章归档
+</span>
+</a>
+</li>
+<li>
+<a href="https://blog.lukeewin.top/s/comment" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-pencil-square-o  faa-tada" aria-hidden="true"></i>
+留言板
+</span>
+</a>
+</li>
+<li>
+<a href="https://blog.lukeewin.top/photos" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-camera-retro faa-horizontal" aria-hidden="true"></i>
+图库页面
+</span>
+</a>
+</li>
+<li>
+<a href="https://blog.lukeewin.top/links" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-link faa-shake" aria-hidden="true"></i>
+友人链接
+</span>
+</a>
+</li>
+<li>
+<a href="https://blog.lukeewin.top/journals" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-calendar-o  faa-tada" aria-hidden="true"></i>
+日志页面
+</span>
+</a>
+</li>
+<li>
+<a href="/s/about" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-address-card-o faa-horizontal" aria-hidden="true"></i>
+关于页面
+</span>
+</a>
+</li>
+</ul> </nav>
+</div>
+</div>
+</div>
+</header>
+<div class="blank"></div>
+<div id="content" class="site-content">
+<div class="top-feature">
+<h1 class="fes-title" style="font-family: 'Ubuntu', sans-serif;">
+<i class="fa fa-anchor" aria-hidden="true"></i>
+<span>成长相册</span>
+</h1>
+<div class="top-feature-v2">
+<div class="the-feature square from_left_and_right">
+<a href="https://blog.lukeewin.top/photos" target="_blank">
+<div class="img">
+<img src="https://blog.lukeewin.top/upload/2022/07/heliu.jpg">
+</div>
+<div class="info">
+<h3>
+<span>深圳世界之窗</span>
+</h3>
+<p>
+<span>2020年的暑假到世界之窗游玩</span>
+</p>
+</div>
+</a>
+</div>
+</div>
+<div class="top-feature-v2">
+<div class="the-feature square from_left_and_right">
+<a href="https://blog.lukeewin.top/photos" target="_blank">
+<div class="img">
+<img src="https://blog.lukeewin.top/upload/2022/07/tsinghua.jpg">
+</div>
+<div class="info">
+<h3>
+<span>清华园</span>
+</h3>
+<p>
+<span>游走清华园</span>
+</p>
+</div>
+</a>
+</div>
+</div>
+<div class="top-feature-v2">
+<div class="the-feature square from_left_and_right">
+<a href="https://blog.lukeewin.top/photos" target="_blank">
+<div class="img">
+<img src="https://blog.lukeewin.top/upload/2022/07/shijie.jpg">
+</div>
+<div class="info">
+<h3>
+<span>深圳世界之窗</span>
+</h3>
+<p>
+<span>世界之窗的正大门</span>
+</p>
+</div>
+</a>
+</div>
+</div>
+</div>
+<div id="primary" class="content-area">
+<main id="main" class="site-main" role="main">
+<h1 class="main-title" style="font-family: 'Ubuntu', sans-serif;">
+<i class="fa fa-envira" aria-hidden="true"></i>
+<span class="i18n" data-iname="home.discovery"> </span>
+</h1>
+<article class="post post-list-thumb " itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/install-deepseek-ocr-2">
+<img src="https://api.lixingyong.com/api/images?postid=518&type=url&itype=image" srcset="https://api.lixingyong.com/api/images?postid=518&type=url&itype=image&th=150" data-srcset="https://api.lixingyong.com/api/images?postid=518&type=url&itype=image&th=640 640w,
+                    https://api.lixingyong.com/api/images?postid=518&type=url&itype=image&th=960 960w,
+                    https://api.lixingyong.com/api/images?postid=518&type=url&itype=image&th=1280 1280w,
+                    https://api.lixingyong.com/api/images?postid=518&type=url&itype=image 1440w" data-sizes="auto" class="lazyload blur-up" />
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2026-01-30"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/install-deepseek-ocr-2" class="post-title"><h3>部署DeepSeek-OCR-2</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="208"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="0">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/python">Python</a></span>
+</div>
+<div class="float-content">
+<p>这篇文章主要讲述了我在服务器中部署DeepSeek最新开源的OCR项目遇到的问题的解决方法。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/install-deepseek-ocr-2" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb post-list-thumb-left" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/gpu-ban-ben-funasr-tui-li-su-du-ce-shi">
+<img src="https://api.lixingyong.com/api/images?postid=517&type=url&itype=image" srcset="https://api.lixingyong.com/api/images?postid=517&type=url&itype=image&th=150" data-srcset="https://api.lixingyong.com/api/images?postid=517&type=url&itype=image&th=640 640w,
+                    https://api.lixingyong.com/api/images?postid=517&type=url&itype=image&th=960 960w,
+                    https://api.lixingyong.com/api/images?postid=517&type=url&itype=image&th=1280 1280w,
+                    https://api.lixingyong.com/api/images?postid=517&type=url&itype=image 1440w" data-sizes="auto" class="lazyload blur-up" />
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2026-01-04"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/gpu-ban-ben-funasr-tui-li-su-du-ce-shi" class="post-title"><h3>GPU版本FunASR推理速度测试</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="210"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="2">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/asr">ASR</a></span>
+</div>
+<div class="float-content">
+<p>这篇文章主要测试了源码编译GPU版本的FunASR在单卡和多卡中的转写速度和资源占用情况。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/gpu-ban-ben-funasr-tui-li-su-du-ce-shi" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb " itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/makefunasrgpulinux">
+<img src="https://api.lixingyong.com/api/images?postid=516&type=url&itype=image" srcset="https://api.lixingyong.com/api/images?postid=516&type=url&itype=image&th=150" data-srcset="https://api.lixingyong.com/api/images?postid=516&type=url&itype=image&th=640 640w,
+                    https://api.lixingyong.com/api/images?postid=516&type=url&itype=image&th=960 960w,
+                    https://api.lixingyong.com/api/images?postid=516&type=url&itype=image&th=1280 1280w,
+                    https://api.lixingyong.com/api/images?postid=516&type=url&itype=image 1440w" data-sizes="auto" class="lazyload blur-up" />
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2026-01-04"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/makefunasrgpulinux" class="post-title"><h3>源码编译GPU版本FunASR</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="138"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="0">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/asr">ASR</a></span>
+</div>
+<div class="float-content">
+<p>这篇文章主要详细记录了我是如何在Linux系统中通过源码编译GPU版本的FunASR的过程，包括model.torchscript模型的转换。虽然可以直接拉取官方的docker镜像，但是镜像拉取速度很慢，并且有些公司不让使用docker在生产环境中。这里就记录了自己的实操过程，希望对你们有帮助。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/makefunasrgpulinux" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb post-list-thumb-left" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/fun-asr-nano-shen-du-ping-ce">
+<img class="lazyload" data-src="https://image.lukeewin.top/img/202512180550685.png" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/svg/loader/orange.progress-bar-stripe-loader.svg" onerror="imgError(this)">
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2025-12-18"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/fun-asr-nano-shen-du-ping-ce" class="post-title"><h3>Fun-ASR-Nano深度评测</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="669"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="2">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/asr">ASR</a></span>
+</div>
+<div class="float-content">
+<p>Fun-ASR-Nano-2512 是由阿里巴巴旗下的通义实验室开源的语音识别模型，通义实验室之前还开源了 SenseVoiceSmall 和 Paraformer 模型，这篇文章使用三种模型对多种方言，以及真实电话录音进行对比测试，在开源的数据集中评估的结果官方已经给出，这里使用自己的数据测试。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/fun-asr-nano-shen-du-ping-ce" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb " itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/funasrapi">
+<img src="https://api.lixingyong.com/api/images?postid=514&type=url&itype=image" srcset="https://api.lixingyong.com/api/images?postid=514&type=url&itype=image&th=150" data-srcset="https://api.lixingyong.com/api/images?postid=514&type=url&itype=image&th=640 640w,
+                    https://api.lixingyong.com/api/images?postid=514&type=url&itype=image&th=960 960w,
+                    https://api.lixingyong.com/api/images?postid=514&type=url&itype=image&th=1280 1280w,
+                    https://api.lixingyong.com/api/images?postid=514&type=url&itype=image 1440w" data-sizes="auto" class="lazyload blur-up" />
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2025-12-18"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/funasrapi" class="post-title"><h3>基于FunASR开发的FunASR_API接口项目</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="331"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="0">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/asr">ASR</a></span>
+</div>
+<div class="float-content">
+<p>这是基于FunASR开发的一套语音识别接口，可私有化部署语音识别接口，可以准确识别通话录音，会议录音，可区分说话人，部署简单，支持在Linux服务器中部署。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/funasrapi" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb post-list-thumb-left" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/funasrctiasr">
+<img src="https://api.lixingyong.com/api/images?postid=513&type=url&itype=image" srcset="https://api.lixingyong.com/api/images?postid=513&type=url&itype=image&th=150" data-srcset="https://api.lixingyong.com/api/images?postid=513&type=url&itype=image&th=640 640w,
+                    https://api.lixingyong.com/api/images?postid=513&type=url&itype=image&th=960 960w,
+                    https://api.lixingyong.com/api/images?postid=513&type=url&itype=image&th=1280 1280w,
+                    https://api.lixingyong.com/api/images?postid=513&type=url&itype=image 1440w" data-sizes="auto" class="lazyload blur-up" />
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2025-12-02"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/funasrctiasr" class="post-title"><h3>记录基于FunASR训练的通话录音转写ASR模型</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="557"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="2">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/asr">ASR</a></span>
+</div>
+<div class="float-content">
+<p>这篇博文详细记录了我给一家公司训练外呼用的ASR模型，开源的ASR模型通常在外呼中识别的准确率偏低，这里使用了16万多条真实通话录音进行训练，真实的通话噪音，基于优秀的SenseVoiceSmall模型训练，训练后的准确率高于原始模型。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/funasrctiasr" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb " itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/bu-shu-si-you-hua-ai-da-mo-xing">
+<img class="lazyload" data-src="https://image.lukeewin.top/img/202511181328770.png" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/svg/loader/orange.progress-bar-stripe-loader.svg" onerror="imgError(this)">
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2025-11-18"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/bu-shu-si-you-hua-ai-da-mo-xing" class="post-title"><h3>基于大模型的本地知识库问答系统部署文档</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="329"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="0">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/llm">大模型</a></span>
+</div>
+<div class="float-content">
+<p>基于本地知识库和大模型的智能问答系统部署，该文章详细讲解了如何利用RAG方式解决大模型无法回答私有化知识内容，可以上传自己的知识库，计算向量，找最相似的向量，结合LLM进行回答。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/bu-shu-si-you-hua-ai-da-mo-xing" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb post-list-thumb-left" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/fu-wu-qi-zhong-ding-wei-xian-ka-zai-zhu-ban-de-wei-zhi">
+<img src="https://api.lixingyong.com/api/images?postid=510&type=url&itype=image" srcset="https://api.lixingyong.com/api/images?postid=510&type=url&itype=image&th=150" data-srcset="https://api.lixingyong.com/api/images?postid=510&type=url&itype=image&th=640 640w,
+                    https://api.lixingyong.com/api/images?postid=510&type=url&itype=image&th=960 960w,
+                    https://api.lixingyong.com/api/images?postid=510&type=url&itype=image&th=1280 1280w,
+                    https://api.lixingyong.com/api/images?postid=510&type=url&itype=image 1440w" data-sizes="auto" class="lazyload blur-up" />
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2025-11-06"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/fu-wu-qi-zhong-ding-wei-xian-ka-zai-zhu-ban-de-wei-zhi" class="post-title"><h3>定位显卡在主板中的位置</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="120"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="0">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/linux">Linux</a></span>
+</div>
+<div class="float-content">
+<p>这篇文章讲述如何在Linux服务器中的多张显卡中找到指定显卡在主板中的位置。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/fu-wu-qi-zhong-ding-wei-xian-ka-zai-zhu-ban-de-wei-zhi" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb " itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/celeryredisasrspk">
+<img class="lazyload" data-src="https://image.lukeewin.top/img/202511031242264.png" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/svg/loader/orange.progress-bar-stripe-loader.svg" onerror="imgError(this)">
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2025-11-03"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/celeryredisasrspk" class="post-title"><h3>基于FunASR开发的内网私有化分布式集群部署语音识别接口</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="536"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="0">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/python">Python</a></span>
+</div>
+<div class="float-content">
+<p>这篇文章主要记录了我开发的一款可支持分布式多服务器多显卡部署的区分说话人并语音识别的接口，适合给公司内部机房部署使用减少开支和确保数据安全。该接口基于FunASR来开发使用fastapi编写接口，使用celery来做分布式异步框架，使用redis做消息队列和缓存结果，可以支持高并发请求，使用公司部署。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/celeryredisasrspk" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="post post-list-thumb post-list-thumb-left" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb">
+<a href="https://blog.lukeewin.top/archives/git-note">
+<img class="lazyload" data-src="https://image.lukeewin.top/img/202510231828061.png" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/svg/loader/orange.progress-bar-stripe-loader.svg" onerror="imgError(this)">
+</a>
+</div>
+<div class="post-content-wrap">
+<div class="post-content">
+<div class="post-date">
+<i class="iconfont icon-time"></i><span class="i18n" data-iname="postlist.time" data-ivalue="2025-10-23"></span>
+</div>
+<a href="https://blog.lukeewin.top/archives/git-note" class="post-title"><h3>Git笔记</h3></a>
+<div class="post-meta">
+<span><i class="iconfont icon-attention"></i><span class="i18n" data-iname="postlist.heat" data-ivalue="160"></span></span>
+<span class="comments-number">
+<i class="iconfont icon-mark"></i>
+<span class="i18n" data-iname="postlist.comments" data-ivalue="0">
+</span>
+</span>
+<span><i class="iconfont icon-file"></i><a href="https://blog.lukeewin.top/categories/git">Git</a></span>
+</div>
+<div class="float-content">
+<p>这篇文章记录了我在python项目中创建本地代码仓库并且提交到远程github代码仓库的过程。</p>
+<div class="post-bottom">
+<a href="https://blog.lukeewin.top/archives/git-note" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+</div>
+</div>
+</div>
+</div>
+</article>
+</main>
+<div id="pagination">
+<a href="https://blog.lukeewin.top/page/2" class="i18n" data-iname="page.next"></a>
+</div>
+</div>
+</div>
+<script type='text/javascript'>var PageAttr ={"metas":{},"isPost":"false",}
+</script>
+</div>
+<footer id="colophon" class="site-footer" role="contentinfo">
+<div class="site-info">
+<div class="footertext">
+<p class="foo-logo" style="background-image: url('https://cdn.jsdelivr.net/gh/LIlGG/cdn@1.0.8/img/Sakura/images/sakura.svg');"></p>
+<a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral"><img alt="又拍云联盟" src="https://blog.lukeewin.top/upload/2022/10/%E5%8F%88%E6%8B%8D%E4%BA%91_logo5.png" width="50px"></a>
+<script>var _hmt =_hmt ||[];(function() {var hm =document.createElement("script");hm.src ="https://hm.baidu.com/hm.js?a4a221c8a774962ecbf3e3c6dc493f90";var s =document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();</script>
+</div>
+<div class="footer-device">
+<p style="font-family: 'Ubuntu', sans-serif;">
+<span>Powered
+<i class="fa fa-vimeo animated" style="color: #e74c3c;"></i>
+by
+<a rel="me" target="_blank" href="http://halo.run" title="一款优秀的开源博客内容发布系统" style="text-decoration:none;">Halo</a>
+</span>
+•
+<span>Crafted with
+<i class="fa fa-heart animated" style="color: #e74c3c;"></i>
+by
+<a rel="me" target="_blank" href="https://github.com/LIlGG/halo-theme-sakura" style="text-decoration:none;">LIlGG</a>
+</span>
+</p>
+<p>
+© 2026 lukeewin
+&nbsp;
+<a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2021017241号</a>
+</p>
+</div>
+</div>
+</footer>
+<div class="openNav">
+<div class="iconflat">
+<div class="icon"></div>
+</div>
+<div class="site-branding">
+<div class="site-title">
+<a href="https://blog.lukeewin.top">
+<img src="https://blog.lukeewin.top/upload/2022/07/img20210227121809.png">
+</a>
+</div>
+</div>
+</div>
+</section>
+<div id="mo-nav">
+<div class="m-avatar">
+<img src="https://blog.lukeewin.top/upload/2021/02/1-4693a1586cbc45afb79a504abc400eab.jpg">
+</div>
+<p style="text-align: center; color: #333; font-weight: 900; font-family: 'Ubuntu', sans-serif; letter-spacing: 1.5px">Hi,Friend</p>
+<p style="display:flex; justify-content:center;">
+<a href="https://github.com/lukeewin" class="social social-github" target="_blank"><img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/github.png" width="18"/></a>
+<a href="https://blog.lukeewin.top/upload/2021/02/mmqrcode1614173853956-9d5f374e1425434ea485bf4a3684d34d.png" class="social social-wechat" target="_blank"><img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/wechat.png" width="18"/></a>
+<a href="//wpa.qq.com/msgrd?v=3&uin=2131672767&site=qq&menu=yes" class="social social-wangyiyun" target="_blank"><img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/qq.png" width="18"/></a>
+<a href="https://space.bilibili.com/674558378/" class="social social-bili" target="_blank"><img src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/images/sns/bilibili.png" width="18"/></a>
+<a href="https://lukeewin.taobao.com/" class="social" target="_blank" title="淘宝店铺">
+<img src="https://blog.lukeewin.top/favicon.ico" width="18"/>
+</a>
+</p>
+<div class="m-search">
+<form class="m-search-form" method="get" action="/search" role="search">
+<input class="m-search-input" type="search" name="keyword" placeholder="搜索..." required>
+</form>
+</div>
+<ul id="menu-menu-1" class="menu">
+<li>
+<a href="/" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-fort-awesome faa-horizontal" aria-hidden="true"></i>
+首页
+</span>
+</a>
+</li>
+<li>
+<a href="#" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-list-ul faa-tada animation-hover" aria-hidden="true"></i>
+清单
+</span>
+</a>
+<ul class="sub-menu">
+<li>
+<a href="https://blog.lukeewin.top/categories" target="_self">
+<i class="fa fa-th-large" aria-hidden="true"></i>
+分类
+</a>
+<li>
+<li>
+<a href="https://blog.lukeewin.top/tags" target="_self">
+<i class="fa fa-tags faa-horizontal animated-hover" aria-hidden="true"></i>
+标签云
+</a>
+<li>
+</ul>
+</li>
+<li>
+<a href="/archives" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-archive faa-shake" aria-hidden="true"></i>
+文章归档
+</span>
+</a>
+</li>
+<li>
+<a href="https://blog.lukeewin.top/s/comment" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-pencil-square-o  faa-tada" aria-hidden="true"></i>
+留言板
+</span>
+</a>
+</li>
+<li>
+<a href="https://blog.lukeewin.top/photos" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-camera-retro faa-horizontal" aria-hidden="true"></i>
+图库页面
+</span>
+</a>
+</li>
+<li>
+<a href="https://blog.lukeewin.top/links" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-link faa-shake" aria-hidden="true"></i>
+友人链接
+</span>
+</a>
+</li>
+<li>
+<a href="https://blog.lukeewin.top/journals" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-calendar-o  faa-tada" aria-hidden="true"></i>
+日志页面
+</span>
+</a>
+</li>
+<li>
+<a href="/s/about" target="_self">
+<span class="faa-parent animated-hover">
+<i class="fa fa-address-card-o faa-horizontal" aria-hidden="true"></i>
+关于页面
+</span>
+</a>
+</li>
+</ul> <p class="m-footer">© 2026 lukeewin</p>
+</div>
+<a href="#" class="cd-top"></a>
+<button class="m-cd-top" title="Go to top">
+<i class="fa fa-chevron-up" aria-hidden="true"></i>
+</button>
+<form class="js-search search-form search-form--modal" method="get" action="/search" role="search">
+<div class="search-form__inner">
+<div>
+<p class="micro mb-">输入后按回车搜索 ...</p>
+<i class="iconfont icon-search"></i>
+<input class="text-input" type="search" name="keyword" placeholder="Search" required>
+</div>
+</div>
+<div class="search_close"></div>
+</form>
+<div id="aplayer-float" style="z-index: 100;" class="aplayer" data-global="true" data-id="2345868969" data-server="netease" data-type="playlist" data-fixed="true" data-preload="none" data-order="random" data-theme="#ffa500" data-autoplay="false"></div>
+<div class="changeSkin-gear no-select">
+<div class="keys">
+<span id="open-skinMenu">切换主题 | SCHEME TOOL &nbsp;<i class="iconfont icon-gear inline-block rotating"></i></span>
+</div>
+</div>
+<div class="skin-menu no-select">
+<div class="theme-controls row-container">
+<ul class="menu-list">
+<li id="bg_0" data-text="默认是纯洁的白色~">
+<i class="fa fa-television" aria-hidden="true"></i>
+</li>
+<li id="bg_1" data-text="樱花飞舞~">
+<i class="iconfont icon-sakura" aria-hidden="true"></i>
+</li>
+<li id="bg_2" data-text="格子控！">
+<i class="fa fa-slack" aria-hidden="true"></i>
+</li>
+<li id="bg_3" data-text="小点点~">
+<i class="iconfont icon-dots" aria-hidden="true"></i>
+</li>
+<li id="bg_4" data-text="充满力量的橙色">
+<i class="fa fa-optin-monster" aria-hidden="true"></i>
+</li>
+<li id="bg_5" data-text="pixiv主题~">
+<i class="iconfont icon-pixiv" aria-hidden="true"></i>
+</li>
+<li id="bg_6" data-text="必应图片">
+<i class="iconfont icon-bing" aria-hidden="true"></i>
+</li>
+<li id="bg_7" data-text="关灯！">
+<i class="fa fa-moon-o" aria-hidden="true"></i>
+</li>
+</ul>
+</div>
+</div>
+<script type='text/javascript'>var Poi ={"pjax":"true","windowheight":"auto","ajaxurl":"https://blog.lukeewin.top","resBaseUrl":"https://blog.lukeewin.top/themes/LIlGG_Sakura","formpostion":"bottom","toc":"true","codeLine":"true","themeChange":"true","headFocus":"true","bgvideo":"","tagRandomColorMin":"0.999","tagRandomColorMax":"1","nickname":"lukeewin","sitename":"lukeewin的博客","themeBase":"https://blog.lukeewin.top/themes/LIlGG_Sakura","openToast":"true","toastWidth":260,"toastHeight":60,"toastTop":"top","toastBackground":"#fe9600","toastColor":"#ffffff","toastFontSize":14,"copyMonitor":"true","copyrightNotice":"true","photosStyle":"justify","photosGutter":10,"tocDepth":0,"i18n":"auto","coverNum":"5","rimageUrl":"https://api.lixingyong.com/api/images","coverOpen":"","meEmail":"","defaultTheme":"bg_0","defaultGroup":"","isPostWordCountToast":"true","isPostEditTimeToast":"true","postWordCountToastNormal":"文章篇幅适中，可以放心阅读。","postWordCountToastMedium":"文章内容较长，请提前准备好咖啡!!!","postWordCountToastDifficulty":"文章内容很长，建议分段阅读。","postEditTimeToastNormal":"近期有所更新，请放心阅读！","postEditTimeToastMedium":"文章距上次编辑时间较远，部分内容可能已经过时！","postEditTimeToastDifficulty":"文章内容已经很陈旧了，也许不再适用！","journalLikes":"true","journalComment":"",};var bgConfig ={"bg_0":{"id":"0","name":"white","desc":"默认是纯洁的白色~","url":"","strategy":"none","isNight":""
+},"bg_1":{"id":"1","name":"sakura","desc":"樱花飞舞~","url":"https://view.lixingyong.com/images/2020/07/23/695cc3a80b21ee7f18bd731824ab9638.png","strategy":"none","isNight":""
+},"bg_2":{"id":"2","name":"gribs","desc":"格子控！","url":"https://view.lixingyong.com/images/2020/07/23/defc1b6783cd16774900517d3b38ded7.jpg","strategy":"none","isNight":""
+},"bg_3":{"id":"3","name":"KAdots","desc":"小点点~","url":"https://view.lixingyong.com/images/2020/07/23/kyotoanimation.png","strategy":"none","isNight":""
+},"bg_4":{"id":"4","name":"totem","desc":"充满力量的橙色","url":"https://view.lixingyong.com/images/2020/07/23/little-monster.png","strategy":"none","isNight":""
+},"bg_5":{"id":"5","name":"pixiv","desc":"pixiv主题~","url":"https://view.lixingyong.com/images/2020/07/23/star02.png","strategy":"none","isNight":""
+},"bg_6":{"id":"6","name":"bing","desc":"必应图片","url":"https://api.mashiro.top/bing/","strategy":"cover","isNight":""
+},"bg_7":{"id":"7","name":"dark","desc":"关灯！","url":"","strategy":"cover","isNight":"true"
+},};</script>
+<script type='text/javascript' src='https://blog.lukeewin.top/themes/LIlGG_Sakura/script/utils.min.js?ver=1.3.4'></script>
+<script type="text/javascript" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/lazysizes/lazysizes.min.js" async></script>
+<script type="text/javascript" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/js/lib.js"></script>
+<script src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/justifiedGallery/jquery.justifiedGallery.min.js" async></script>
+<script type="text/javascript" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/js/highlight/highlight.pack.js" defer></script>
+<script type="text/javascript" src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/js/highlight/highlightjs-line-numbers.min.js" defer></script>
+<script src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/APlayer/APlayer.min.js" defer></script>
+<script src="https://blog.lukeewin.top/themes/LIlGG_Sakura/plugins/aplayer/js/index.js" defer></script>
+<script src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/tocbot/dist/tocbot.min.js" defer></script>
+<script src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/js/comment/sakura-comment.min.js?ver=1.3.4" defer></script>
+<script src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/jqcloud2/jqcloud.min.js" defer></script>
+<script type='text/javascript'>var wordcloud =[{'text':'ocr','weight':'1','link':'https://blog.lukeewin.top/tags/ocr'},{'text':'MySQL','weight':'1','link':'https://blog.lukeewin.top/tags/mysql'},{'text':'TTS','weight':'4','link':'https://blog.lukeewin.top/tags/tts'},{'text':'ASR','weight':'17','link':'https://blog.lukeewin.top/tags/asr'},{'text':'nodejs','weight':'1','link':'https://blog.lukeewin.top/tags/nodejs'},{'text':'js','weight':'1','link':'https://blog.lukeewin.top/tags/js'},{'text':'llm','weight':'5','link':'https://blog.lukeewin.top/tags/llm'},{'text':'MyBatis','weight':'2','link':'https://blog.lukeewin.top/tags/mybatis'},{'text':'项目相关','weight':'9','link':'https://blog.lukeewin.top/tags/projects'},{'text':'Shiro','weight':'1','link':'https://blog.lukeewin.top/tags/shiro'},{'text':'SpringMVC','weight':'7','link':'https://blog.lukeewin.top/tags/springmvc'},{'text':'Spring Boot','weight':'11','link':'https://blog.lukeewin.top/tags/springboot'},{'text':'Spring','weight':'2','link':'https://blog.lukeewin.top/tags/spring'},{'text':'面试','weight':'8','link':'https://blog.lukeewin.top/tags/interview'},{'text':'Android','weight':'1','link':'https://blog.lukeewin.top/tags/android'},{'text':'数据结构','weight':'3','link':'https://blog.lukeewin.top/tags/datastructure'},{'text':'maven','weight':'3','link':'https://blog.lukeewin.top/tags/maven'},{'text':'Git','weight':'6','link':'https://blog.lukeewin.top/tags/git'},{'text':'算法','weight':'3','link':'https://blog.lukeewin.top/tags/算法'},{'text':'笔试','weight':'7','link':'https://blog.lukeewin.top/tags/笔试'},{'text':'python','weight':'23','link':'https://blog.lukeewin.top/tags/python'},{'text':'ss','weight':'1','link':'https://blog.lukeewin.top/tags/ss'},{'text':'java web','weight':'7','link':'https://blog.lukeewin.top/tags/javaweb'},{'text':'tomcat','weight':'2','link':'https://blog.lukeewin.top/tags/tomcat'},{'text':'网站建设相关','weight':'4','link':'https://blog.lukeewin.top/tags/network'},{'text':'容器技术','weight':'2','link':'https://blog.lukeewin.top/tags/rongqi'},{'text':'WeChat','weight':'0','link':'https://blog.lukeewin.top/tags/wechat'},{'text':'Linux','weight':'31','link':'https://blog.lukeewin.top/tags/linux'},{'text':'其它','weight':'6','link':'https://blog.lukeewin.top/tags/others'},{'text':'数据库学习','weight':'7','link':'https://blog.lukeewin.top/tags/sql'},{'text':'前端学习','weight':'1','link':'https://blog.lukeewin.top/tags/qianduan'},{'text':'后端学习','weight':'5','link':'https://blog.lukeewin.top/tags/houduan'},{'text':'java学习','weight':'34','link':'https://blog.lukeewin.top/tags/java'},{'text':'学习心得','weight':'25','link':'https://blog.lukeewin.top/tags/experience'},]
+</script>
+<script src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/js/echarts/echarts.min.js" async defer></script>
+<script type='text/javascript'>var categoryRadar ={'默认分类':'6','后端':'8','前端':'2','网站优化':'3','Linux':'28','WeChat':'0','学习经验':'24','Python':'23','Java':'26','算法':'3','Git':'6','maven':'3','数据结构':'3','Spring':'6','Android':'1','SpringBoot':'10','SpringMVC':'6','面试':'9','MySQL':'9','Redis':'1','Shiro':'1','网络安全':'2','MyBatis':'3','项目相关':'12','大模型':'4','AI':'21','tomcat':'3','ASR':'17','TTS':'4',}
+</script>
+<script type='text/javascript' src='https://blog.lukeewin.top/themes/LIlGG_Sakura/source/js/qrcode.min.js' defer></script>
+<script type='text/javascript' src='https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/flv.min/index.js' defer></script>
+<script type='text/javascript' src='https://blog.lukeewin.top/themes/LIlGG_Sakura/script/i18n.min.js?ver=1.3.4' defer></script>
+<script type='text/javascript' src='https://blog.lukeewin.top/themes/LIlGG_Sakura/script/app.min.js?ver=1.3.4'></script>
+<script src="https://blog.lukeewin.top/themes/LIlGG_Sakura/source/lib/jquery-ui/jquery-ui.min.js" async defer></script>
+<link rel="stylesheet" type="text/css" href="https://blog.lukeewin.top/themes/LIlGG_Sakura/plugins/live2d/css/takagi.min.css"/>
+<div class="takagi">
+<div class="takagi-tips"></div>
+<canvas id="live2d" class="live2d"></canvas>
+<div class="takagi-tool">
+<span class="fui-home"></span>
+<span class="fui-chat"></span>
+<span class="fui-eye"></span>
+<span class="fui-user"></span>
+<span class="fui-photo"></span>
+<span class="fui-info-circle"></span>
+<span class="fui-cross"></span>
+</div>
+</div>
+<script>if(document.body.clientWidth >860) {function loadJS(url,callback){var script =document.createElement('script');script.type ='text/javascript';script.src =url;if(typeof callback =='function'){script.onload =script.onreadystatechange =function(){if(!this.readyState ||this.readyState =='loaded'
+||this.readyState =='complete'){callback();script.onload =script.onreadystatechange =null;}
+}
+}
+document.body.appendChild(script);};loadJS("https://blog.lukeewin.top/themes/LIlGG_Sakura/plugins/live2d/js/takagi-tips.min.js");loadJS("https://blog.lukeewin.top/themes/LIlGG_Sakura/plugins/live2d/js/live2d.min.js",function() {initModel("",options);});var options ={modelAPI:"//live2d.fghrsh.net/api/",tipsMessage:"https://blog.lukeewin.top/themes/LIlGG_Sakura/plugins/live2d/json/takagi-tips.json",hitokotoAPI:"hitokoto.cn",modelId:1,modelTexturesId:23,showToolMenu:true,canCloseLive2d:true,canSwitchModel:true,canSwitchTextures:true,canSwitchHitokoto:true,canTakeScreenshot:true,canTurnToHomePage:true,canTurnToAboutPage:true,modelStorage:true,modelRandMode:"rand",modelTexturesRandMode:"rand",showHitokoto:true,showF12Status:false,showF12Message:false,showF12OpenMsg:true,showCopyMessage:true,showWelcomeMessage:true,takagiSize:"280x250",takagiTipsSize:"250x70",takagiFontSize:"12px",takagiToolFont:"14px",takagiToolLine:"20px",takagiToolTop:"0px",takagiMinWidth:"768px",takagiEdgeSide:"left:0",takagiDraggable:"disable",takagiDraggableRevert:true,l2dVersion:"1.0.0",l2dVerDate:"2020.07.01",homePageUrl:"https://blog.lukeewin.top",aboutPageUrl:"https://blog.lukeewin.top/s/about",screenshotCaptureName:"live2d.png"
+}
+}
+</script>
+<div class="site-statistics">
+<script>var _hmt =_hmt ||[];(function() {var hm =document.createElement("script");hm.src ="https://hm.baidu.com/hm.js?a4a221c8a774962ecbf3e3c6dc493f90";var s =document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();</script>
+</div>
+</body>
+</html>
