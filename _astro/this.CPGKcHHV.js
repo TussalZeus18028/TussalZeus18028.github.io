@@ -1,1 +1,0 @@
-import{a5 as t,v as b,q as h,a1 as k,a6 as q}from"./utils.CQ0avnOn.js";function u(r,a){return r===a||r?.[q]===a}function c(r={},a,f,S){return t(()=>{var i,s;return b(()=>{i=s,s=[],h(()=>{r!==f(...s)&&(a(r,...s),i&&u(f(...i),r)&&a(null,...i))})}),()=>{k(()=>{s&&u(f(...s),r)&&a(null,...s)})}}),r}export{c as b};
