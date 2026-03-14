@@ -1,0 +1,23 @@
+[
+    {
+        "filename": "bci_sdk_v2.0.zip",
+        "name": "BCI SDK v2.0",
+        "size": "24.8 MB",
+        "description": "跨平台脑机接口开发套件，包含Python/Rust绑定、示例数据集。",
+        "icon": "fa-brain"
+    },
+    {
+        "filename": "quantum-transformer-paper.pdf",
+        "name": "量子Transformer预印本",
+        "size": "3.2 MB",
+        "description": "论文草稿：基于超导电路的注意力机制实现，包含实验结果。",
+        "icon": "fa-file-pdf"
+    },
+    {
+        "filename": "edge-render-demo.tar.gz",
+        "name": "边缘渲染演示节点",
+        "size": "156 MB",
+        "description": "可运行的边缘渲染节点程序（Linux Docker镜像），含配置文件。",
+        "icon": "fa-cubes"
+    }
+]

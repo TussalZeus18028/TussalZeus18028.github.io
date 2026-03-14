@@ -1,0 +1,23 @@
+[
+    {
+        "filename": "quantum-attention.md",
+        "title": "量子注意力机制：超越Transformer的算力极限",
+        "date": "2026.03.12",
+        "category": "Q-LAB",
+        "excerpt": "在超导电路中实现类脑Transformer，效率提升400%……本文深入探讨量子叠加态如何重塑注意力计算。"
+    },
+    {
+        "filename": "bci-os.md",
+        "title": "神经接口操作系统v2.0 开源发布",
+        "date": "2026.03.05",
+        "category": "BIOHACK",
+        "excerpt": "开源的BCI框架支持意念打字与无人机群控制。包含完整的SDK文档及示例。"
+    },
+    {
+        "filename": "edge-render.md",
+        "title": "Web3 边缘渲染网络：白皮书草案",
+        "date": "2026.02.28",
+        "category": "EDGE",
+        "excerpt": "使用Folding@home思想构建去中心化渲染农场，延迟低于50ms。附网络拓扑图。"
+    }
+]
