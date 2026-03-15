@@ -21,10 +21,24 @@
         "icon": "fa-file-pdf"
     },
     {
+        "filename": "LifeGame.zip",
+        "name": "生命游戏",
+        "size": "17.7 KiB",
+        "description": "威康生命游戏",
+        "icon": "fa-cubes"
+    },
+    {
         "filename": "发包.zip",
         "name": "数据包发送器",
         "size": "530 KB",
         "description": "可进行高速数据包发送",
         "icon": "fa-cubes"
+    },
+    {
+        "filename": "world excute me.zip",
+        "name": "world excute me",
+        "size": "3.18 MB",
+        "description": "一个AI学习爱的故事",
+        "icon": "fa-love"
     }
 ]
