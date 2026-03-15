@@ -1,23 +1,30 @@
 [
     {
-        "filename": "bci_sdk_v2.0.zip",
-        "name": "BCI SDK v2.0",
-        "size": "24.8 MB",
-        "description": "跨平台脑机接口开发套件，包含Python/Rust绑定、示例数据集。",
+        "filename": "NSudoLG.exe",
+        "name": "M2-Team NSudo Launcher 8.2",
+        "size": "156 KiB",
+        "description": "使用其他权限运行windows 程序",
         "icon": "fa-brain"
     },
     {
-        "filename": "quantum-transformer-paper.pdf",
-        "name": "量子Transformer预印本",
-        "size": "3.2 MB",
-        "description": "论文草稿：基于超导电路的注意力机制实现，包含实验结果。",
+        "filename": "Sysinternals 工具包.zip",
+        "name": "Sysinternals 工具包",
+        "size": "5.53 MiB",
+        "description": "重要的windows调试工具",
         "icon": "fa-file-pdf"
     },
     {
-        "filename": "edge-render-demo.tar.gz",
-        "name": "边缘渲染演示节点",
-        "size": "156 MB",
-        "description": "可运行的边缘渲染节点程序（Linux Docker镜像），含配置文件。",
+        "filename": "JiyuKiller.exe",
+        "name": "极域杀手",
+        "size": "1.07 MiB",
+        "description": "控制极域",
+        "icon": "fa-file-pdf"
+    },
+    {
+        "filename": "发包.zip",
+        "name": "数据包发送器",
+        "size": "530 KB",
+        "description": "可进行高速数据包发送",
         "icon": "fa-cubes"
     }
 ]
