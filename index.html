@@ -7,25 +7,15 @@
     <!-- 科技感字体 & 图标库 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<<<<<<< HEAD
     <!-- Markdown 解析器 (用于扩展阅读) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         /* 样式完全不变，保持之前的高科技风格 */
-=======
-    <!-- Markdown 解析器 (用于扩展阅读，目前仅作备用) -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         body {
             background-color: #0a0c12;
             font-family: 'Inter', sans-serif;
@@ -35,11 +25,6 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-<<<<<<< HEAD
-=======
-
-        /* 高科技网格背景 + 光晕 */
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         body::before {
             content: "";
             position: fixed;
@@ -51,10 +36,6 @@
             pointer-events: none;
             z-index: 0;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         body::after {
             content: "";
             position: fixed;
@@ -63,10 +44,6 @@
             pointer-events: none;
             z-index: 0;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .wrapper {
             position: relative;
             z-index: 2;
@@ -75,11 +52,6 @@
             padding: 2rem 1.5rem;
             backdrop-filter: blur(1px);
         }
-<<<<<<< HEAD
-=======
-
-        /* 头部 —— 全息投影卡片 (静态个人信息) */
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .hero {
             background: rgba(15, 25, 35, 0.6);
             backdrop-filter: blur(12px);
@@ -94,10 +66,6 @@
             gap: 2rem;
             flex-wrap: wrap;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .avatar {
             width: 110px;
             height: 110px;
@@ -111,10 +79,6 @@
             box-shadow: 0 0 30px #00ffffaa, 0 0 10px #8a2be2 inset;
             border: 2px solid #b0f0ff;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .hero-text h1 {
             font-size: 2.8rem;
             font-weight: 800;
@@ -124,10 +88,6 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 15px #00ccff;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .hero-tagline {
             font-size: 1.2rem;
             display: flex;
@@ -137,27 +97,14 @@
             color: #bbf0ff;
             font-family: 'Space Mono', monospace;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .hero-tagline span {
             border-right: 2px solid #0ff;
             padding-right: 1.2rem;
             opacity: 0.9;
         }
-<<<<<<< HEAD
         .hero-tagline span:last-child {
             border-right: none;
         }
-=======
-
-        .hero-tagline span:last-child {
-            border-right: none;
-        }
-
-        /* 板块标题 */
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .section-title {
             font-size: 2rem;
             font-weight: 600;
@@ -170,10 +117,6 @@
             text-shadow: 0 0 8px cyan;
             position: relative;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .section-title::before {
             content: "///";
             margin-right: 12px;
@@ -181,21 +124,12 @@
             font-weight: 400;
             opacity: 0.8;
         }
-<<<<<<< HEAD
-=======
-
-        /* 博客卡片网格 (动态填充) */
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .blog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.8rem;
             margin-bottom: 2rem;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .blog-card {
             background: rgba(10, 20, 28, 0.7);
             backdrop-filter: blur(8px);
@@ -208,19 +142,11 @@
             position: relative;
             overflow: hidden;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .blog-card:hover {
             transform: translateY(-6px);
             border-color: #0ff;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.4), 0 10px 25px -5px black;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .blog-card::after {
             content: "";
             position: absolute;
@@ -229,17 +155,9 @@
             background: linear-gradient(90deg, transparent, #0ff, transparent);
             transition: left 0.6s;
         }
-<<<<<<< HEAD
         .blog-card:hover::after {
             left: 100%;
         }
-=======
-
-        .blog-card:hover::after {
-            left: 100%;
-        }
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .blog-date {
             font-family: 'Space Mono', monospace;
             color: #00e0ff;
@@ -249,37 +167,21 @@
             align-items: center;
             gap: 6px;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .blog-date i {
             font-size: 0.8rem;
             color: #0ff;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .blog-title {
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             line-height: 1.3;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .blog-excerpt {
             color: #aac8e0;
             margin: 1rem 0 1.5rem;
             font-size: 0.95rem;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .read-link {
             text-decoration: none;
             color: #0ff;
@@ -291,18 +193,9 @@
             transition: border-color 0.2s;
             cursor: pointer;
         }
-<<<<<<< HEAD
         .read-link:hover {
             border-bottom-color: #0ff;
         }
-=======
-
-        .read-link:hover {
-            border-bottom-color: #0ff;
-        }
-
-        /* 下载卡片网格 (动态填充) */
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .download-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -310,10 +203,6 @@
             margin-top: 1.5rem;
             margin-bottom: 3rem;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .download-card {
             background: rgba(8, 18, 28, 0.8);
             backdrop-filter: blur(10px);
@@ -326,28 +215,16 @@
             transition: 0.2s;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .download-card:hover {
             border-color: #ff44e6;
             box-shadow: 0 0 30px #ff44e680, 0 0 10px #0ff;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .file-icon {
             font-size: 3.2rem;
             color: #0ff;
             margin-bottom: 1rem;
             filter: drop-shadow(0 0 8px cyan);
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .file-name {
             font-size: 1.7rem;
             font-weight: 700;
@@ -356,10 +233,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .file-meta {
             display: flex;
             justify-content: space-between;
@@ -369,18 +242,10 @@
             padding-bottom: 0.8rem;
             margin: 1rem 0 1.5rem;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .file-meta span i {
             margin-right: 5px;
             color: #ffb86c;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .download-btn {
             background: transparent;
             border: 2px solid #0ff;
@@ -400,32 +265,17 @@
             margin-top: auto;
             box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
             background-color: rgba(0, 255, 255, 0.03);
-<<<<<<< HEAD
             text-decoration: none;
         }
-=======
-            text-decoration: none;  /* 如果用作链接 */
-        }
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .download-btn:hover {
             background: #0ff;
             color: #0a0c12;
             box-shadow: 0 0 35px cyan, 0 0 10px #0ff inset;
             border-color: #0ff;
         }
-<<<<<<< HEAD
         .download-btn i {
             font-size: 1.2rem;
         }
-=======
-
-        .download-btn i {
-            font-size: 1.2rem;
-        }
-
-        /* 页脚——扫描线效果 */
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .footer {
             margin-top: 5rem;
             text-align: center;
@@ -435,10 +285,6 @@
             font-family: 'Space Mono', monospace;
             position: relative;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .footer::before {
             content: "";
             position: absolute;
@@ -446,29 +292,16 @@
             background: linear-gradient(90deg, transparent, #0ff, #ff44e6, #0ff, transparent);
             opacity: 0.6;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .glitch {
             color: #0ff;
             font-weight: 600;
             animation: glitch 3s infinite;
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         @keyframes glitch {
             0%,100% { opacity: 1; text-shadow: 0 0 5px #0ff, 0 0 15px #0ff; }
             33% { text-shadow: -2px 0 #ff44e6, 2px 2px #0ff; }
             66% { text-shadow: 2px -2px #0ff, -2px 2px #ff44e6; }
         }
-<<<<<<< HEAD
-=======
-
-        /* 加载提示 */
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         .loading {
             text-align: center;
             padding: 3rem;
@@ -484,10 +317,6 @@
             border-radius: 24px;
             background: rgba(30, 0, 20, 0.5);
         }
-<<<<<<< HEAD
-=======
-        /* 响应式 */
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         @media (max-width: 600px) {
             .hero {
                 flex-direction: column;
@@ -508,17 +337,12 @@
 </head>
 <body>
     <div class="wrapper">
-<<<<<<< HEAD
         <!-- 个人全息档案 (现在所有文本通过 text.json 填充) -->
-=======
-        <!-- 个人全息档案 (静态可自定义) -->
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
         <header class="hero">
             <div class="avatar">
                 <i class="fas fa-robot"></i>
             </div>
             <div class="hero-text">
-<<<<<<< HEAD
                 <h1 id="hero-name">NOVA CHEN</h1>  <!-- 原硬编码作为后备 -->
                 <div class="hero-tagline">
                     <span id="tag1"><i class="fas fa-microchip"></i> AI Architect</span>
@@ -526,15 +350,6 @@
                     <span id="tag3"><i class="fas fa-bolt"></i> CyberNomad</span>
                 </div>
                 <p id="hero-desc" style="color: #9fc9ff; max-width: 550px; margin-top: 0.8rem; border-left: 3px solid #0ff; padding-left: 1rem;">
-=======
-                <h1>TussalZeus18028</h1>
-                <div class="hero-tagline">
-                    <span><i class="fas fa-microchip"></i>  AI Architect</span>
-                    <span><i class="fas fa-cubes"></i>  Quantum tinkerer</span>
-                    <span><i class="fas fa-bolt"></i>  神人</span>
-                </div>
-                <p style="color: #9fc9ff; max-width: 550px; margin-top: 0.8rem; border-left: 3px solid #0ff; padding-left: 1rem;">
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                     解码未来 · 分享开源精神与深度思考。所有博客与下载均动态加载。
                 </p>
             </div>
@@ -556,7 +371,6 @@
             </div>
         </section>
 
-<<<<<<< HEAD
         <!-- 页脚装饰 (文本也通过 text.json 填充) -->
         <footer class="footer">
             <p id="footer-line1"><span class="glitch">[ root@nova-blog ]</span>  —  所有数据实时从 /date 和 /Files 读取  —  <i class="fas fa-satellite-dish"></i>  ORBIT 2026</p>
@@ -565,16 +379,6 @@
     </div>
 
     <!-- 动态加载脚本 (增加 text.json 支持) -->
-=======
-        <!-- 页脚装饰 -->
-        <footer class="footer">
-            <p><span class="glitch">[ root@nova-blog ]</span>  —  所有数据实时从 /date 和 /Files 读取  —  <i class="fas fa-satellite-dish"></i>  ORBIT 2026</p>
-            <p style="margin-top: 0.5rem; font-size: 0.8rem;">🛸 需要维护 date/articles.json 与 download.json  |  文章卡片支持点击阅读全文 (实验性)</p>
-        </footer>
-    </div>
-
-    <!-- 动态加载脚本 (使用 marked 解析 markdown，但卡片仅依赖 json) -->
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
     <script>
         (function() {
             // 辅助函数：显示错误信息到容器
@@ -585,7 +389,6 @@
                 }
             }
 
-<<<<<<< HEAD
             // ========== 1. 加载 text.json 填充静态文本 ==========
             async function loadTextConfig() {
                 try {
@@ -632,9 +435,6 @@
             }
 
             // ========== 2. 加载文章列表 ==========
-=======
-            // 加载文章列表 (期望 date/articles.json 存在)
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
             async function loadBlogPosts() {
                 const blogContainer = document.getElementById('blog-posts');
                 if (!blogContainer) return;
@@ -646,10 +446,6 @@
                     }
                     const articles = await response.json();
                     
-<<<<<<< HEAD
-=======
-                    // 清空加载提示
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                     blogContainer.innerHTML = '';
 
                     if (!articles || articles.length === 0) {
@@ -657,64 +453,32 @@
                         return;
                     }
 
-<<<<<<< HEAD
                     for (const article of articles) {
                         const card = document.createElement('article');
                         card.className = 'blog-card';
 
-=======
-                    // 遍历生成卡片
-                    for (const article of articles) {
-                        // article 字段: filename, title, date, category, excerpt (可选)
-                        const card = document.createElement('article');
-                        card.className = 'blog-card';
-
-                        // 日期和分类行
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                         const dateDiv = document.createElement('div');
                         dateDiv.className = 'blog-date';
                         dateDiv.innerHTML = `<i class="far fa-calendar-alt"></i> ${article.date || '未知日期'} · <i class="fas fa-tag"></i> ${article.category || '未分类'}`;
                         
-<<<<<<< HEAD
-=======
-                        // 标题
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                         const titleH3 = document.createElement('h3');
                         titleH3.className = 'blog-title';
                         titleH3.textContent = article.title || '无标题';
 
-<<<<<<< HEAD
-=======
-                        // 摘要
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                         const excerptP = document.createElement('p');
                         excerptP.className = 'blog-excerpt';
                         excerptP.textContent = article.excerpt || '这个大脑区块还没有写入摘要……';
 
-<<<<<<< HEAD
                         const readLink = document.createElement('a');
                         readLink.className = 'read-link';
                         readLink.href = '#';
                         readLink.innerHTML = '读取更多 <i class="fas fa-arrow-right"></i>';
-=======
-                        // 阅读链接 (点击可尝试加载 .md 全文，作为附加彩蛋)
-                        const readLink = document.createElement('a');
-                        readLink.className = 'read-link';
-                        readLink.href = '#';  // 阻止默认跳转
-                        readLink.innerHTML = '读取更多 <i class="fas fa-arrow-right"></i>';
-                        // 绑定点击事件：从 date 文件夹获取对应 .md 文件并用 modal 或新窗口展示 (简单实现：alert 提示)
-                        // 这里只做演示，实际可以打开模态框，但为了简洁，点击时在新窗口显示渲染后的 markdown (简易)
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                         readLink.addEventListener('click', async function(e) {
                             e.preventDefault();
                             if (!article.filename) {
                                 alert('未指定文章文件');
                                 return;
                             }
-<<<<<<< HEAD
-=======
-                            // 尝试获取 markdown 内容
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                             try {
                                 const mdResponse = await fetch(`date/${article.filename}`);
                                 if (!mdResponse.ok) {
@@ -722,10 +486,6 @@
                                     return;
                                 }
                                 const mdText = await mdResponse.text();
-<<<<<<< HEAD
-=======
-                                // 使用 marked 解析并在新窗口显示 (简单做法)
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                                 const htmlContent = marked.parse(mdText);
                                 const newWin = window.open('', '_blank');
                                 newWin.document.write(`
@@ -752,11 +512,7 @@
                 }
             }
 
-<<<<<<< HEAD
             // ========== 3. 加载下载列表 ==========
-=======
-            // 加载下载列表 (期望 download.json 存在)
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
             async function loadDownloads() {
                 const downloadContainer = document.getElementById('download-cards');
                 if (!downloadContainer) return;
@@ -776,7 +532,6 @@
                     }
 
                     for (const item of downloads) {
-<<<<<<< HEAD
                         const card = document.createElement('div');
                         card.className = 'download-card';
 
@@ -791,42 +546,16 @@
                         metaDiv.className = 'file-meta';
                         metaDiv.innerHTML = `<span><i class="fas fa-database"></i> ${item.size || '?'}</span><span><i class="fas fa-shield-alt"></i> 下载</span>`;
                         
-=======
-                        // item 字段: filename, name, size, description, icon (可选)
-                        const card = document.createElement('div');
-                        card.className = 'download-card';
-
-                        // 图标
-                        const iconI = document.createElement('i');
-                        iconI.className = `fas ${item.icon || 'fa-file'} file-icon`;
-                        // 文件名
-                        const nameDiv = document.createElement('div');
-                        nameDiv.className = 'file-name';
-                        nameDiv.textContent = item.name || item.filename;
-                        // 元数据
-                        const metaDiv = document.createElement('div');
-                        metaDiv.className = 'file-meta';
-                        metaDiv.innerHTML = `<span><i class="fas fa-database"></i> ${item.size || '?'}</span><span><i class="fas fa-shield-alt"></i> 下载</span>`;
-                        // 描述
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                         const descP = document.createElement('p');
                         descP.style.marginBottom = '1.5rem';
                         descP.style.color = '#b0e0ff';
                         descP.style.fontSize = '0.95rem';
                         descP.textContent = item.description || '一个神秘的文件';
 
-<<<<<<< HEAD
                         const btn = document.createElement('a');
                         btn.className = 'download-btn';
                         btn.href = `Files/${item.filename}`;
                         btn.setAttribute('download', '');
-=======
-                        // 下载按钮 (实际链接到 Files/ 目录下的文件)
-                        const btn = document.createElement('a');
-                        btn.className = 'download-btn';
-                        btn.href = `Files/${item.filename}`;
-                        btn.setAttribute('download', '');  // 提示浏览器下载 (不一定强制)
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
                         btn.innerHTML = '<i class="fas fa-download"></i> 获取文件';
 
                         card.appendChild(iconI);
@@ -843,7 +572,6 @@
                 }
             }
 
-<<<<<<< HEAD
             // ========== 4. 初始化所有加载 ==========
             async function init() {
                 // 先加载文本配置（无论成功与否都继续）
@@ -868,47 +596,4 @@
     -->
 </body>
 </html>
-=======
-            // 执行加载
-            loadBlogPosts();
-            loadDownloads();
-
-            // 控制台彩蛋
-            console.log("%c🔥 动态博客已启动 · 数据源自 /date 和 /Files 🔥", "color: #0ff; font-size: 16px; font-family: monospace; background: #0a0c12; padding: 4px; border: 1px solid cyan;");
-        })();
-    </script>
-
-    <!-- 说明：本页面需要同目录下存在以下文件和文件夹：
-         - date/articles.json   (文章索引，格式见下方示例)
-         - Files/               (存放实际下载文件)
-         - download.json        (下载项索引)
-         可选：date/ 下的 .md 文件供“读取更多”使用。
-    -->
-    <!-- 
-        articles.json 示例：
-        [
-            {
-                "filename": "quantum-attention.md",
-                "title": "量子注意力机制",
-                "date": "2026.03.12",
-                "category": "Q-LAB",
-                "excerpt": "在超导电路中实现类脑Transformer，效率提升400%……"
-            }
-        ]
-
-        download.json 示例：
-        [
-            {
-                "filename": "source_code.zip",
-                "name": "项目源码",
-                "size": "1.2 MB",
-                "description": "包含全部代码和文档",
-                "icon": "fa-file-archive"
-            }
-        ]
-    -->
-</body>
-</html>
->>>>>>> 7108ebecfdc4991db01d890908841d2a24015352
-
 
