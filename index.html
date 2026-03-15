@@ -1,21 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>赛博博客 · 极客下载站 · 动态版</title>
-    <!-- 科技感字体 & 图标库 -->
+    <title>赛博枢纽 · 极客下载站 · 全量版</title>
+    <!-- 科技感字体 & 图标库 (与主页保持一致) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Markdown 解析器 (用于扩展阅读) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        /* 样式完全不变，保持之前的高科技风格 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* ===== 全局高科技风格 (与主页完全一致) ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background-color: #0a0c12;
             font-family: 'Inter', sans-serif;
@@ -52,10 +47,10 @@
             padding: 2rem 1.5rem;
             backdrop-filter: blur(1px);
         }
+        /* 头部全息卡 */
         .hero {
             background: rgba(15, 25, 35, 0.6);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(0, 255, 255, 0.25);
             border-radius: 32px;
             padding: 2.5rem 2rem;
@@ -67,8 +62,7 @@
             flex-wrap: wrap;
         }
         .avatar {
-            width: 110px;
-            height: 110px;
+            width: 110px; height: 110px;
             background: linear-gradient(145deg, #00ccff, #a020f0);
             border-radius: 50%;
             display: flex;
@@ -97,14 +91,8 @@
             color: #bbf0ff;
             font-family: 'Space Mono', monospace;
         }
-        .hero-tagline span {
-            border-right: 2px solid #0ff;
-            padding-right: 1.2rem;
-            opacity: 0.9;
-        }
-        .hero-tagline span:last-child {
-            border-right: none;
-        }
+        .hero-tagline span { border-right: 2px solid #0ff; padding-right: 1.2rem; opacity: 0.9; }
+        .hero-tagline span:last-child { border-right: none; }
         .section-title {
             font-size: 2rem;
             font-weight: 600;
@@ -124,16 +112,16 @@
             font-weight: 400;
             opacity: 0.8;
         }
-        .blog-grid {
+        /* 网格布局 */
+        .blog-grid, .download-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.8rem;
             margin-bottom: 2rem;
         }
-        .blog-card {
+        .blog-card, .download-card, .more-card {
             background: rgba(10, 20, 28, 0.7);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(0, 255, 255, 0.3);
             border-radius: 24px;
             padding: 1.8rem 1.5rem;
@@ -142,12 +130,12 @@
             position: relative;
             overflow: hidden;
         }
-        .blog-card:hover {
+        .blog-card:hover, .download-card:hover, .more-card:hover {
             transform: translateY(-6px);
             border-color: #0ff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4), 0 10px 25px -5px black;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
         }
-        .blog-card::after {
+        .blog-card::after, .download-card::after, .more-card::after {
             content: "";
             position: absolute;
             top: 0; left: -100%;
@@ -155,207 +143,95 @@
             background: linear-gradient(90deg, transparent, #0ff, transparent);
             transition: left 0.6s;
         }
-        .blog-card:hover::after {
+        .blog-card:hover::after, .download-card:hover::after, .more-card:hover::after {
             left: 100%;
         }
-        .blog-date {
-            font-family: 'Space Mono', monospace;
-            color: #00e0ff;
-            font-size: 0.9rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .blog-date i {
-            font-size: 0.8rem;
-            color: #0ff;
-        }
-        .blog-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
-        }
-        .blog-excerpt {
-            color: #aac8e0;
-            margin: 1rem 0 1.5rem;
-            font-size: 0.95rem;
-        }
-        .read-link {
-            text-decoration: none;
-            color: #0ff;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.2s;
-            cursor: pointer;
-        }
-        .read-link:hover {
-            border-bottom-color: #0ff;
-        }
-        .download-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2rem;
-            margin-top: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        .download-card {
-            background: rgba(8, 18, 28, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1.5px solid rgba(0, 255, 255, 0.3);
-            border-radius: 28px;
-            padding: 2rem 1.8rem;
+        /* 更多卡片特殊样式 */
+        .more-card {
             display: flex;
             flex-direction: column;
-            transition: 0.2s;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: rgba(20, 30, 45, 0.9);
+            border: 2px dashed #0ff;
+            cursor: pointer;
         }
-        .download-card:hover {
-            border-color: #ff44e6;
-            box-shadow: 0 0 30px #ff44e680, 0 0 10px #0ff;
-        }
-        .file-icon {
-            font-size: 3.2rem;
+        .more-card .more-icon {
+            font-size: 3rem;
             color: #0ff;
             margin-bottom: 1rem;
-            filter: drop-shadow(0 0 8px cyan);
+            filter: drop-shadow(0 0 10px cyan);
         }
-        .file-name {
-            font-size: 1.7rem;
+        .more-card .more-text {
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: 1px;
-            background: linear-gradient(145deg, #fff, #b0f0ff);
+            background: linear-gradient(145deg, #0ff, #ff44e6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .file-meta {
-            display: flex;
-            justify-content: space-between;
+        .more-card .more-sub {
             font-family: 'Space Mono', monospace;
-            color: #6fd9ff;
-            border-bottom: 1px dashed #1f4b66;
-            padding-bottom: 0.8rem;
-            margin: 1rem 0 1.5rem;
+            color: #8ad0ff;
+            margin-top: 0.5rem;
         }
-        .file-meta span i {
-            margin-right: 5px;
-            color: #ffb86c;
-        }
+        /* 下载卡片特有 */
+        .file-icon { font-size: 3.2rem; color: #0ff; margin-bottom: 1rem; filter: drop-shadow(0 0 8px cyan); }
+        .file-name { font-size: 1.7rem; font-weight: 700; background: linear-gradient(145deg, #fff, #b0f0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .file-meta { display: flex; justify-content: space-between; font-family: 'Space Mono', monospace; color: #6fd9ff; border-bottom: 1px dashed #1f4b66; padding-bottom: 0.8rem; margin: 1rem 0 1.5rem; }
         .download-btn {
-            background: transparent;
-            border: 2px solid #0ff;
-            color: #0ff;
-            font-size: 1.1rem;
-            font-weight: 600;
-            padding: 0.9rem 0;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-top: auto;
-            box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
-            background-color: rgba(0, 255, 255, 0.03);
-            text-decoration: none;
+            background: transparent; border: 2px solid #0ff; color: #0ff; font-size: 1.1rem; font-weight: 600;
+            padding: 0.9rem 0; border-radius: 60px; cursor: pointer; transition: all 0.25s;
+            display: flex; align-items: center; justify-content: center; gap: 10px; text-transform: uppercase;
+            letter-spacing: 1.5px; margin-top: auto; box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+            background-color: rgba(0, 255, 255, 0.03); text-decoration: none;
         }
-        .download-btn:hover {
-            background: #0ff;
-            color: #0a0c12;
-            box-shadow: 0 0 35px cyan, 0 0 10px #0ff inset;
-            border-color: #0ff;
-        }
-        .download-btn i {
-            font-size: 1.2rem;
-        }
+        .download-btn:hover { background: #0ff; color: #0a0c12; box-shadow: 0 0 35px cyan; border-color: #0ff; }
         .footer {
-            margin-top: 5rem;
-            text-align: center;
-            padding: 2rem 0 1rem;
-            border-top: 1px solid rgba(0, 255, 255, 0.25);
-            color: #5d9eb9;
-            font-family: 'Space Mono', monospace;
-            position: relative;
+            margin-top: 5rem; text-align: center; padding: 2rem 0 1rem;
+            border-top: 1px solid rgba(0, 255, 255, 0.25); color: #5d9eb9;
+            font-family: 'Space Mono', monospace; position: relative;
         }
         .footer::before {
-            content: "";
-            position: absolute;
-            top: -2px; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #0ff, #ff44e6, #0ff, transparent);
-            opacity: 0.6;
+            content: ""; position: absolute; top: -2px; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #0ff, #ff44e6, #0ff, transparent); opacity: 0.6;
         }
-        .glitch {
-            color: #0ff;
-            font-weight: 600;
-            animation: glitch 3s infinite;
-        }
+        .glitch { color: #0ff; font-weight: 600; animation: glitch 3s infinite; }
         @keyframes glitch {
             0%,100% { opacity: 1; text-shadow: 0 0 5px #0ff, 0 0 15px #0ff; }
             33% { text-shadow: -2px 0 #ff44e6, 2px 2px #0ff; }
             66% { text-shadow: 2px -2px #0ff, -2px 2px #ff44e6; }
         }
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: #0ff;
-            font-size: 1.5rem;
-            font-family: 'Space Mono', monospace;
-        }
-        .error-message {
-            color: #ff88aa;
-            padding: 2rem;
-            text-align: center;
-            border: 1px solid #ff44e6;
-            border-radius: 24px;
-            background: rgba(30, 0, 20, 0.5);
-        }
+        .loading { text-align: center; padding: 3rem; color: #0ff; font-size: 1.5rem; font-family: 'Space Mono', monospace; }
+        .error-message { color: #ff88aa; padding: 2rem; text-align: center; border: 1px solid #ff44e6; border-radius: 24px; background: rgba(30, 0, 20, 0.5); }
+        /* 返回链接 */
+        .back-link { margin-bottom: 2rem; display: inline-block; color: #0ff; font-size: 1.2rem; text-decoration: none; border-bottom: 2px solid transparent; transition: 0.2s; }
+        .back-link:hover { border-bottom-color: #0ff; }
         @media (max-width: 600px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-                padding: 1.8rem;
-            }
-            .hero-text h1 {
-                font-size: 2rem;
-            }
-            .hero-tagline {
-                justify-content: center;
-            }
-            .section-title {
-                font-size: 1.6rem;
-            }
+            .hero { flex-direction: column; text-align: center; padding: 1.8rem; }
+            .hero-text h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <!-- 个人全息档案 (现在所有文本通过 text.json 填充) -->
+        <!-- 个人全息档案 (由text.json驱动) -->
         <header class="hero">
-            <div class="avatar">
-                <i class="fas fa-robot"></i>
-            </div>
+            <div class="avatar"><i class="fas fa-robot"></i></div>
             <div class="hero-text">
-                <h1 id="hero-name">TussalZeus18028</h1>  <!-- 原硬编码作为后备 -->
+                <h1 id="hero-name">TussalZeus18028</h1>
                 <div class="hero-tagline">
                     <span id="tag1"><i class="fas fa-microchip"></i> AI Architect</span>
                     <span id="tag2"><i class="fas fa-cubes"></i> Quantum tinkerer</span>
                     <span id="tag3"><i class="fas fa-bolt"></i> CyberNomad</span>
                 </div>
                 <p id="hero-desc" style="color: #9fc9ff; max-width: 550px; margin-top: 0.8rem; border-left: 3px solid #0ff; padding-left: 1rem;">
-                    解码未来 · 分享开源精神与深度思考。所有博客与下载均动态加载。
+                    解码未来 · 分享开源精神与深度思考。
                 </p>
             </div>
         </header>
 
-        <!-- 博客文章区 (动态从 date/articles.json + .md 读取) -->
+        <!-- 博客文章区 (动态、最多显示3篇) -->
         <section>
             <h2 class="section-title">LATEST THOUGHTS</h2>
             <div id="blog-posts" class="blog-grid">
@@ -363,7 +239,7 @@
             </div>
         </section>
 
-        <!-- 下载功能区 (动态从 download.json 读取) -->
+        <!-- 下载功能区 (动态、最多显示3项) -->
         <section>
             <h2 class="section-title">NEURAL DOWNLOADS</h2>
             <div id="download-cards" class="download-grid">
@@ -371,229 +247,266 @@
             </div>
         </section>
 
-        <!-- 页脚装饰 (文本也通过 text.json 填充) -->
         <footer class="footer">
-            <p id="footer-line1"><span class="glitch">[ root@nova-blog ]</span>  —  所有数据实时从 /date 和 /Files 读取  —  <i class="fas fa-satellite-dish"></i>  ORBIT 2026</p>
-            <p id="footer-line2" style="margin-top: 0.5rem; font-size: 0.8rem;">🛸 需要维护 date/articles.json 与 download.json  |  文章卡片支持点击阅读全文 (实验性)</p>
+            <p id="footer-line1"><span class="glitch">[ root@nova-blog ]</span>  —  所有数据实时读取  —  <i class="fas fa-satellite-dish"></i>  ORBIT 2026</p>
+            <p id="footer-line2" style="margin-top: 0.5rem; font-size: 0.8rem;">🛸 修改 date/text.json 调整文字 | 超过三项显示“更多”</p>
         </footer>
     </div>
 
-    <!-- 动态加载脚本 (增加 text.json 支持) -->
     <script>
         (function() {
-            // 辅助函数：显示错误信息到容器
+            // ---------- 辅助函数 ----------
             function showError(containerId, message) {
                 const container = document.getElementById(containerId);
-                if (container) {
-                    container.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle"></i> ${message}</div>`;
-                }
+                if (container) container.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle"></i> ${message}</div>`;
             }
 
-            // ========== 1. 加载 text.json 填充静态文本 ==========
+            // 炫酷的新窗口渲染 (带高科技装饰)
+            function renderMarkdownInNewWindow(title, mdHtml) {
+                const win = window.open('', '_blank');
+                win.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>${title} · 赛博阅读</title>
+                        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                        <style>
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                            body {
+                                background-color: #0a0c12;
+                                font-family: 'Inter', sans-serif;
+                                color: #e0f0ff;
+                                line-height: 1.7;
+                                min-height: 100vh;
+                                position: relative;
+                                padding: 2rem;
+                            }
+                            body::before {
+                                content: "";
+                                position: fixed;
+                                top: 0; left: 0; width: 100%; height: 100%;
+                                background-image: linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
+                                                  linear-gradient(90deg, rgba(0, 255, 255, 0.02) 1px, transparent 1px);
+                                background-size: 40px 40px;
+                                pointer-events: none;
+                                z-index: 0;
+                            }
+                            body::after {
+                                content: "";
+                                position: fixed;
+                                top: 0; left: 0; width: 100%; height: 100%;
+                                background: radial-gradient(circle at 50% 50%, rgba(0, 180, 255, 0.1), transparent 70%);
+                                pointer-events: none;
+                                z-index: 0;
+                            }
+                            .cyber-container {
+                                position: relative;
+                                z-index: 2;
+                                max-width: 900px;
+                                margin: 0 auto;
+                                background: rgba(10, 20, 30, 0.7);
+                                backdrop-filter: blur(12px);
+                                border: 2px solid rgba(0, 255, 255, 0.3);
+                                border-radius: 32px;
+                                padding: 2.5rem;
+                                box-shadow: 0 0 40px rgba(0, 255, 255, 0.2), 0 0 0 1px rgba(0, 255, 255, 0.3) inset;
+                            }
+                            h1, h2, h3 { 
+                                color: #a0f0ff; 
+                                border-bottom: 1px solid #0ff3; 
+                                padding-bottom: 0.5rem;
+                                margin: 1.5rem 0 1rem;
+                                text-shadow: 0 0 8px cyan;
+                            }
+                            h1 { font-size: 2.5rem; }
+                            p { margin: 1.2rem 0; color: #cef0ff; }
+                            code {
+                                background: #1a2a3a;
+                                color: #ffb0e0;
+                                padding: 0.2rem 0.5rem;
+                                border-radius: 8px;
+                                font-family: 'Space Mono', monospace;
+                                border: 1px solid #0ff3;
+                            }
+                            pre {
+                                background: #0f1a24;
+                                padding: 1.5rem;
+                                border-radius: 20px;
+                                border: 1px solid #0ff;
+                                overflow-x: auto;
+                                box-shadow: 0 0 20px #0ff2;
+                            }
+                            a { color: #0ff; text-decoration: none; border-bottom: 1px dashed; }
+                            hr { border: 1px solid #0ff3; margin: 2rem 0; }
+                            .header-glow {
+                                text-align: center;
+                                margin-bottom: 2rem;
+                                font-size: 1.2rem;
+                                color: #0ff;
+                                font-family: 'Space Mono', monospace;
+                                text-transform: uppercase;
+                                letter-spacing: 4px;
+                                opacity: 0.8;
+                            }
+                            i.fas, i.far { color: #0ff; margin-right: 6px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="cyber-container">
+                            <div class="header-glow">
+                                <i class="fas fa-brain"></i>  NEURAL INTERFACE  <i class="fas fa-microchip"></i>
+                            </div>
+                            ${mdHtml}
+                            <div style="text-align:center; margin-top:3rem; color:#4f9fbf; font-family:'Space Mono'">
+                                <i class="fas fa-robot"></i>  EOF  ·  ${new Date().toLocaleDateString()}
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                `);
+                win.document.close();
+            }
+
+            // ---------- 1. 加载 text.json 填充静态文本 ----------
             async function loadTextConfig() {
                 try {
-                    const response = await fetch('date/text.json');
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status} — 无法获取文本配置`);
-                    }
-                    const texts = await response.json();
-
-                    // 替换名字
-                    const nameEl = document.getElementById('hero-name');
-                    if (nameEl && texts.name) nameEl.textContent = texts.name;
-
-                    // 替换三个标签（注意标签内包含图标，所以要小心只替换文本节点）
-                    // 简单方法：直接替换 span 的 innerHTML，保留图标
+                    const resp = await fetch('date/text.json');
+                    if (!resp.ok) return;
+                    const texts = await resp.json();
+                    if (texts.name) document.getElementById('hero-name').textContent = texts.name;
                     if (texts.tagline && Array.isArray(texts.tagline)) {
-                        const tag1 = document.getElementById('tag1');
-                        const tag2 = document.getElementById('tag2');
-                        const tag3 = document.getElementById('tag3');
-                        if (tag1 && texts.tagline[0]) tag1.innerHTML = `<i class="fas fa-microchip"></i> ${texts.tagline[0]}`;
-                        if (tag2 && texts.tagline[1]) tag2.innerHTML = `<i class="fas fa-cubes"></i> ${texts.tagline[1]}`;
-                        if (tag3 && texts.tagline[2]) tag3.innerHTML = `<i class="fas fa-bolt"></i> ${texts.tagline[2]}`;
+                        const tags = [document.getElementById('tag1'), document.getElementById('tag2'), document.getElementById('tag3')];
+                        tags.forEach((el, idx) => { if (el && texts.tagline[idx]) el.innerHTML = `<i class="fas ${idx===0?'fa-microchip':idx===1?'fa-cubes':'fa-bolt'}"></i> ${texts.tagline[idx]}`; });
                     }
-
-                    // 替换描述
-                    const descEl = document.getElementById('hero-desc');
-                    if (descEl && texts.description) descEl.textContent = texts.description;
-
-                    // 替换页脚第一行（注意保留 glitch 效果）
-                    const footer1 = document.getElementById('footer-line1');
-                    if (footer1 && texts.footer_line1) {
-                        // 保留 <span class="glitch"> 结构
-                        footer1.innerHTML = `<span class="glitch">${texts.footer_line1.split('—')[0]}</span> — ${texts.footer_line1.split('—')[1] || ''} <i class="fas fa-satellite-dish"></i> ${texts.footer_line1.split('—')[2] || ''}`;
+                    if (texts.description) document.getElementById('hero-desc').textContent = texts.description;
+                    if (texts.footer_line1) {
+                        const parts = texts.footer_line1.split('—');
+                        document.getElementById('footer-line1').innerHTML = `<span class="glitch">${parts[0]}</span> — ${parts[1] || ''} <i class="fas fa-satellite-dish"></i> ${parts[2] || ''}`;
                     }
-
-                    // 替换页脚第二行
-                    const footer2 = document.getElementById('footer-line2');
-                    if (footer2 && texts.footer_line2) footer2.textContent = texts.footer_line2;
-
-                } catch (err) {
-                    console.warn('加载 text.json 失败，将使用默认文本。', err);
-                    // 失败时保留原有硬编码文本，无需额外操作
-                }
+                    if (texts.footer_line2) document.getElementById('footer-line2').textContent = texts.footer_line2;
+                } catch (e) { /* 保留默认 */ }
             }
 
-            // ========== 2. 加载文章列表 ==========
+            // ---------- 2. 加载文章 (最多3篇, 超出显示更多卡片) ----------
             async function loadBlogPosts() {
-                const blogContainer = document.getElementById('blog-posts');
-                if (!blogContainer) return;
-
+                const container = document.getElementById('blog-posts');
+                if (!container) return;
                 try {
-                    const response = await fetch('date/articles.json');
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status} — 无法获取文章索引`);
-                    }
-                    const articles = await response.json();
-                    
-                    blogContainer.innerHTML = '';
+                    const resp = await fetch('date/articles.json');
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const articles = await resp.json();
+                    container.innerHTML = '';
 
                     if (!articles || articles.length === 0) {
-                        blogContainer.innerHTML = '<div class="error-message">📭 暂未发现思想碎片 (articles.json为空)</div>';
+                        container.innerHTML = '<div class="error-message">📭 暂未发现思想碎片</div>';
                         return;
                     }
 
-                    for (const article of articles) {
+                    const showMore = articles.length > 3;
+                    const displayItems = showMore ? articles.slice(0, 3) : articles;
+
+                    for (const article of displayItems) {
                         const card = document.createElement('article');
                         card.className = 'blog-card';
+                        card.innerHTML = `
+                            <div class="blog-date"><i class="far fa-calendar-alt"></i> ${article.date || '未知'} · <i class="fas fa-tag"></i> ${article.category || '未分类'}</div>
+                            <h3 class="blog-title">${article.title || '无标题'}</h3>
+                            <p class="blog-excerpt">${article.excerpt || '……'}</p>
+                            <a href="#" class="read-link" data-filename="${article.filename || ''}" data-title="${article.title || ''}">读取更多 <i class="fas fa-arrow-right"></i></a>
+                        `;
+                        container.appendChild(card);
+                    }
 
-                        const dateDiv = document.createElement('div');
-                        dateDiv.className = 'blog-date';
-                        dateDiv.innerHTML = `<i class="far fa-calendar-alt"></i> ${article.date || '未知日期'} · <i class="fas fa-tag"></i> ${article.category || '未分类'}`;
-                        
-                        const titleH3 = document.createElement('h3');
-                        titleH3.className = 'blog-title';
-                        titleH3.textContent = article.title || '无标题';
-
-                        const excerptP = document.createElement('p');
-                        excerptP.className = 'blog-excerpt';
-                        excerptP.textContent = article.excerpt || '这个大脑区块还没有写入摘要……';
-
-                        const readLink = document.createElement('a');
-                        readLink.className = 'read-link';
-                        readLink.href = '#';
-                        readLink.innerHTML = '读取更多 <i class="fas fa-arrow-right"></i>';
-                        readLink.addEventListener('click', async function(e) {
+                    // 绑定阅读事件
+                    document.querySelectorAll('.read-link').forEach(link => {
+                        link.addEventListener('click', async (e) => {
                             e.preventDefault();
-                            if (!article.filename) {
-                                alert('未指定文章文件');
-                                return;
-                            }
+                            const filename = link.dataset.filename;
+                            const title = link.dataset.title;
+                            if (!filename) { alert('未指定文章文件'); return; }
                             try {
-                                const mdResponse = await fetch(`date/${article.filename}`);
-                                if (!mdResponse.ok) {
-                                    alert(`无法读取文章: ${article.filename}`);
-                                    return;
-                                }
-                                const mdText = await mdResponse.text();
-                                const htmlContent = marked.parse(mdText);
-                                const newWin = window.open('', '_blank');
-                                newWin.document.write(`
-                                    <html><head><title>${article.title}</title>
-                                    <style>body { background:#0a0c12; color:#e0f0ff; font-family: 'Inter', sans-serif; padding: 2rem; }</style>
-                                    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-                                    </head><body>${htmlContent}</body></html>
-                                `);
-                            } catch (err) {
-                                alert('加载失败：' + err.message);
-                            }
+                                const mdResp = await fetch(`date/${filename}`);
+                                if (!mdResp.ok) { alert('读取失败'); return; }
+                                const mdText = await mdResp.text();
+                                const html = marked.parse(mdText);
+                                renderMarkdownInNewWindow(title, html);
+                            } catch (err) { alert('加载失败: ' + err.message); }
                         });
+                    });
 
-                        card.appendChild(dateDiv);
-                        card.appendChild(titleH3);
-                        card.appendChild(excerptP);
-                        card.appendChild(readLink);
-
-                        blogContainer.appendChild(card);
+                    // 如果超过3篇，追加更多卡片
+                    if (showMore) {
+                        const moreCard = document.createElement('div');
+                        moreCard.className = 'more-card';
+                        moreCard.innerHTML = `
+                            <div class="more-icon"><i class="fas fa-arrow-circle-right"></i></div>
+                            <div class="more-text">+${articles.length - 3} 篇深度文章</div>
+                            <div class="more-sub">点击探索全部</div>
+                        `;
+                        moreCard.addEventListener('click', () => { window.location.href = 'all-articles.html'; });
+                        container.appendChild(moreCard);
                     }
                 } catch (err) {
-                    console.error('博客加载错误:', err);
-                    showError('blog-posts', `神经链接失败: ${err.message} — 请确认 date/articles.json 是否存在且格式正确。`);
+                    showError('blog-posts', `神经链接失败: ${err.message}`);
                 }
             }
 
-            // ========== 3. 加载下载列表 ==========
+            // ---------- 3. 加载下载 (最多3项, 超出显示更多卡片) ----------
             async function loadDownloads() {
-                const downloadContainer = document.getElementById('download-cards');
-                if (!downloadContainer) return;
-
+                const container = document.getElementById('download-cards');
+                if (!container) return;
                 try {
-                    const response = await fetch('download.json');
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status} — 无法获取下载索引`);
-                    }
-                    const downloads = await response.json();
-
-                    downloadContainer.innerHTML = '';
+                    const resp = await fetch('download.json');
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const downloads = await resp.json();
+                    container.innerHTML = '';
 
                     if (!downloads || downloads.length === 0) {
-                        downloadContainer.innerHTML = '<div class="error-message">🔌 下载库为空 (download.json 无数据)</div>';
+                        container.innerHTML = '<div class="error-message">🔌 下载库为空</div>';
                         return;
                     }
 
-                    for (const item of downloads) {
+                    const showMore = downloads.length > 3;
+                    const displayItems = showMore ? downloads.slice(0, 3) : downloads;
+
+                    for (const item of displayItems) {
                         const card = document.createElement('div');
                         card.className = 'download-card';
+                        card.innerHTML = `
+                            <i class="fas ${item.icon || 'fa-file'} file-icon"></i>
+                            <div class="file-name">${item.name || item.filename}</div>
+                            <div class="file-meta"><span><i class="fas fa-database"></i> ${item.size || '?'}</span><span><i class="fas fa-shield-alt"></i> 下载</span></div>
+                            <p style="margin-bottom:1.5rem; color:#b0e0ff; font-size:0.95rem;">${item.description || '一个神秘的文件'}</p>
+                            <a class="download-btn" href="Files/${item.filename}" download><i class="fas fa-download"></i> 获取文件</a>
+                        `;
+                        container.appendChild(card);
+                    }
 
-                        const iconI = document.createElement('i');
-                        iconI.className = `fas ${item.icon || 'fa-file'} file-icon`;
-                        
-                        const nameDiv = document.createElement('div');
-                        nameDiv.className = 'file-name';
-                        nameDiv.textContent = item.name || item.filename;
-                        
-                        const metaDiv = document.createElement('div');
-                        metaDiv.className = 'file-meta';
-                        metaDiv.innerHTML = `<span><i class="fas fa-database"></i> ${item.size || '?'}</span><span><i class="fas fa-shield-alt"></i> 下载</span>`;
-                        
-                        const descP = document.createElement('p');
-                        descP.style.marginBottom = '1.5rem';
-                        descP.style.color = '#b0e0ff';
-                        descP.style.fontSize = '0.95rem';
-                        descP.textContent = item.description || '一个神秘的文件';
-
-                        const btn = document.createElement('a');
-                        btn.className = 'download-btn';
-                        btn.href = `Files/${item.filename}`;
-                        btn.setAttribute('download', '');
-                        btn.innerHTML = '<i class="fas fa-download"></i> 获取文件';
-
-                        card.appendChild(iconI);
-                        card.appendChild(nameDiv);
-                        card.appendChild(metaDiv);
-                        card.appendChild(descP);
-                        card.appendChild(btn);
-
-                        downloadContainer.appendChild(card);
+                    if (showMore) {
+                        const moreCard = document.createElement('div');
+                        moreCard.className = 'more-card';
+                        moreCard.innerHTML = `
+                            <div class="more-icon"><i class="fas fa-download"></i></div>
+                            <div class="more-text">+${downloads.length - 3} 个文件</div>
+                            <div class="more-sub">进入下载仓库</div>
+                        `;
+                        moreCard.addEventListener('click', () => { window.location.href = 'all-downloads.html'; });
+                        container.appendChild(moreCard);
                     }
                 } catch (err) {
-                    console.error('下载加载错误:', err);
-                    showError('download-cards', `量子仓库连接失败: ${err.message} — 请确认 download.json 是否存在且格式正确。`);
+                    showError('download-cards', `量子仓库连接失败: ${err.message}`);
                 }
             }
 
-            // ========== 4. 初始化所有加载 ==========
+            // ---------- 初始化 ----------
             async function init() {
-                // 先加载文本配置（无论成功与否都继续）
                 await loadTextConfig();
-                // 然后加载文章和下载（可并行）
                 await Promise.all([loadBlogPosts(), loadDownloads()]);
             }
-
             init();
-
-            console.log("%c🔥 动态博客已启动 · 所有静态文本来自 date/text.json 🔥", "color: #0ff; font-size: 16px; font-family: monospace; background: #0a0c12; padding: 4px; border: 1px solid cyan;");
         })();
     </script>
-
-    <!-- 
-        需要额外文件：
-        - date/text.json       (页面静态文字配置)
-        - date/articles.json   (文章索引)
-        - date/xxx.md          (文章正文)
-        - download.json        (下载项索引)
-        - Files/xxx            实际下载文件
-    -->
 </body>
 </html>
-
