@@ -1,0 +1,11 @@
+{
+    "name": "你的名字",
+    "tagline": [
+        "AI 架构师",
+        "量子探索者",
+        "赛博游民"
+    ],
+    "description": "这是一个完全可定制的个人博客，所有文字均由此文件控制。你可以随意修改这段描述。",
+    "footer_line1": "[ root@your-blog ]  —  静态文本由 text.json 驱动  —  ORBIT 2026",
+    "footer_line2": "🛸 修改 date/text.json 即可更改页面上所有文字"
+}
