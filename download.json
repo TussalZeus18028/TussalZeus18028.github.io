@@ -30,8 +30,15 @@
     {
         "filename": "发包.zip",
         "name": "数据包发送器",
-        "size": "530 KB",
+        "size": "530 KiB",
         "description": "可进行高速数据包发送",
+        "icon": "fa-cubes"
+    },
+    {
+        "filename": "ipconfig.cmd",
+        "name": "IP检测",
+        "size": "3.18 KiB",
+        "description": "IP地址检测",
         "icon": "fa-cubes"
     },
     {
