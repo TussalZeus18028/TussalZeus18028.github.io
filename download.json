@@ -35,7 +35,7 @@
         "icon": "fa-cubes"
     },
     {
-        "filename": "ipconfig.cmd",
+        "filename": "scanner.exe",
         "name": "IP检测",
         "size": "3.18 KiB",
         "description": "IP地址检测",
