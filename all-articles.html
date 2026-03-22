@@ -2,14 +2,14 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全部文章 · 赛博博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>全部文章 · 赛博博客 · 动态觉醒</title>
     <!-- 字体 & 图标库 (与主页一致) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        /* ========== 全局高科技风格 (与主页完全一致) ========== */
+        /* ========== 全局高科技风格 + 增强动效 ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background-color: #0a0c12;
@@ -19,17 +19,24 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            cursor: default;
         }
+        /* 动态流动网格背景 */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.02) 1px, transparent 1px);
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
             pointer-events: none;
             z-index: 0;
+            animation: driftGrid 20s linear infinite;
+        }
+        @keyframes driftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
         }
         body::after {
             content: "";
@@ -38,6 +45,34 @@
             background: radial-gradient(circle at 50% 50%, rgba(0, 180, 255, 0.08), transparent 70%);
             pointer-events: none;
             z-index: 0;
+        }
+        /* 全局扫描光晕 */
+        .global-scan {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(125deg, rgba(0,255,255,0) 0%, rgba(0,255,255,0.02) 40%, rgba(255,0,200,0.01) 100%);
+            pointer-events: none;
+            z-index: 1;
+            animation: scanPulse 8s infinite alternate;
+        }
+        @keyframes scanPulse {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.6; }
+        }
+        /* 鼠标跟随光晕 */
+        .cursor-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.2) 0%, rgba(0, 255, 255, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s linear;
+            filter: blur(18px);
+            opacity: 0.5;
         }
         .wrapper {
             position: relative;
@@ -58,7 +93,11 @@
             transition: 0.2s;
             font-family: 'Space Mono', monospace;
         }
-        .back-link:hover { border-bottom-color: #0ff; }
+        .back-link:hover {
+            border-bottom-color: #0ff;
+            text-shadow: 0 0 8px cyan;
+        }
+        /* 页面标题 + 扫描线动效 */
         .page-title {
             font-size: 2.5rem;
             font-weight: 700;
@@ -70,28 +109,69 @@
             -webkit-text-fill-color: transparent;
             border-left: 6px solid #0ff;
             padding-left: 1.5rem;
+            position: relative;
+            overflow: hidden;
         }
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: -100%;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #0ff, #ff44e6, transparent);
+            animation: titleSweep 3s infinite linear;
+        }
+        @keyframes titleSweep {
+            0% { left: -100%; }
+            100% { left: 120%; }
+        }
+        /* 文章网格布局 */
         .blog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.8rem;
             margin-bottom: 3rem;
         }
+        /* 卡片通用样式 + 入场动画 */
         .blog-card {
             background: rgba(10, 20, 28, 0.7);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(0, 255, 255, 0.3);
             border-radius: 24px;
             padding: 1.8rem 1.5rem;
-            transition: all 0.2s ease;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.8);
             position: relative;
             overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardRise 0.5s ease forwards;
+            animation-delay: calc(var(--order, 0) * 0.08s);
+        }
+        @keyframes cardRise {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .blog-card::before {
+            content: "";
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, cyan, magenta, cyan);
+            border-radius: 26px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .blog-card:hover::before {
+            opacity: 0.25;
         }
         .blog-card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-6px) scale(1.01);
             border-color: #0ff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 35px rgba(0, 255, 255, 0.6);
         }
         .blog-card::after {
             content: "";
@@ -101,7 +181,9 @@
             background: linear-gradient(90deg, transparent, #0ff, transparent);
             transition: left 0.6s;
         }
-        .blog-card:hover::after { left: 100%; }
+        .blog-card:hover::after {
+            left: 100%;
+        }
         .blog-date {
             font-family: 'Space Mono', monospace;
             color: #00e0ff;
@@ -134,9 +216,25 @@
             transition: border-color 0.2s;
             cursor: pointer;
         }
-        .read-link:hover { border-bottom-color: #0ff; }
-        .loading { text-align: center; padding: 3rem; color: #0ff; font-size: 1.5rem; font-family: 'Space Mono', monospace; }
-        .error-message { color: #ff88aa; padding: 2rem; text-align: center; border: 1px solid #ff44e6; border-radius: 24px; background: rgba(30, 0, 20, 0.5); }
+        .read-link:hover {
+            border-bottom-color: #0ff;
+            text-shadow: 0 0 5px cyan;
+        }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #0ff;
+            font-size: 1.5rem;
+            font-family: 'Space Mono', monospace;
+        }
+        .error-message {
+            color: #ff88aa;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid #ff44e6;
+            border-radius: 24px;
+            background: rgba(30, 0, 20, 0.5);
+        }
         .footer {
             margin-top: 4rem;
             text-align: center;
@@ -152,10 +250,35 @@
             top: -2px; left: 0; width: 100%; height: 2px;
             background: linear-gradient(90deg, transparent, #0ff, #ff44e6, #0ff, transparent);
             opacity: 0.6;
+            animation: footerFlow 4s infinite alternate;
+        }
+        @keyframes footerFlow {
+            0% { opacity: 0.2; background-position: -200px; }
+            100% { opacity: 1; background-position: 200px; }
+        }
+        .glitch {
+            color: #0ff;
+            font-weight: 600;
+            animation: glitch 3s infinite;
+        }
+        @keyframes glitch {
+            0%,100% { opacity: 1; text-shadow: 0 0 5px #0ff, 0 0 15px #0ff; }
+            33% { text-shadow: -2px 0 #ff44e6, 2px 2px #0ff; }
+            66% { text-shadow: 2px -2px #0ff, -2px 2px #ff44e6; }
+        }
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 8px; background: #0a0c12; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(#0ff, #ff44e6); border-radius: 10px; }
+        @media (max-width: 600px) {
+            .cursor-glow { display: none; }
+            .page-title { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
+    <div class="global-scan"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
     <div class="wrapper">
         <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回主站</a>
         <h1 class="page-title"><i class="fas fa-archive"></i> 全部文章 · 神经档案</h1>
@@ -170,74 +293,106 @@
     </div>
 
     <script>
-        (async function() {
+        (function() {
+            // 鼠标跟随光晕
+            const glow = document.getElementById('cursorGlow');
+            if (glow && window.innerWidth > 600) {
+                document.addEventListener('mousemove', (e) => {
+                    glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+                    glow.style.opacity = '0.65';
+                });
+                document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
+            }
+
             const container = document.getElementById('all-articles');
             const countSpan = document.getElementById('article-count');
-            try {
-                const resp = await fetch('date/articles.json');
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                const articles = await resp.json();
-                if (!articles || articles.length === 0) {
-                    container.innerHTML = '<div class="error-message">📭 这里暂时一片空白</div>';
-                    return;
-                }
-                countSpan.textContent = articles.length;
-                container.innerHTML = ''; // 清空 loading
 
-                for (const article of articles) {
-                    const card = document.createElement('article');
-                    card.className = 'blog-card';
-                    card.innerHTML = `
-                        <div class="blog-date"><i class="far fa-calendar-alt"></i> ${article.date || '未知'} · <i class="fas fa-tag"></i> ${article.category || '未分类'}</div>
-                        <h3 class="blog-title">${article.title || '无标题'}</h3>
-                        <p class="blog-excerpt">${article.excerpt || '……'}</p>
-                        <a href="#" class="read-link" data-filename="${article.filename || ''}" data-title="${article.title || ''}">读取更多 <i class="fas fa-arrow-right"></i></a>
-                    `;
-                    container.appendChild(card);
-                }
+            async function loadArticles() {
+                try {
+                    const resp = await fetch('date/articles.json');
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const articles = await resp.json();
+                    if (!articles || articles.length === 0) {
+                        container.innerHTML = '<div class="error-message">📭 这里暂时一片空白</div>';
+                        return;
+                    }
+                    countSpan.textContent = articles.length;
+                    container.innerHTML = '';
 
-                // 绑定阅读事件（复用主页的高科技弹窗）
-                document.querySelectorAll('.read-link').forEach(link => {
-                    link.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        const filename = link.dataset.filename;
-                        const title = link.dataset.title;
-                        if (!filename) { alert('未指定文章文件'); return; }
-                        try {
-                            const mdResp = await fetch(`date/${filename}`);
-                            if (!mdResp.ok) { alert('读取失败'); return; }
-                            const mdText = await mdResp.text();
-                            const html = marked.parse(mdText);
-                            // 打开带科技装饰的新窗口
-                            const win = window.open('', '_blank');
-                            win.document.write(`
-                                <!DOCTYPE html>
-                                <html>
-                                <head><meta charset="UTF-8"><title>${title} · 赛博阅读</title>
-                                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
-                                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-                                <style>
-                                    * { margin:0; padding:0; box-sizing:border-box; }
-                                    body { background:#0a0c12; color:#e0f0ff; font-family:'Inter',sans-serif; padding:2rem; position:relative; }
-                                    body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background-image:linear-gradient(rgba(0,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,0.02) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
-                                    .cyber-container { position:relative; z-index:2; max-width:900px; margin:0 auto; background:rgba(10,20,30,0.7); backdrop-filter:blur(12px); border:2px solid rgba(0,255,255,0.3); border-radius:32px; padding:2.5rem; box-shadow:0 0 40px rgba(0,255,255,0.2); }
-                                    h1,h2,h3 { color:#a0f0ff; border-bottom:1px solid #0ff3; padding-bottom:0.5rem; margin:1.5rem 0 1rem; text-shadow:0 0 8px cyan; }
-                                    p { margin:1.2rem 0; color:#cef0ff; }
-                                    code { background:#1a2a3a; color:#ffb0e0; padding:0.2rem 0.5rem; border-radius:8px; font-family:'Space Mono',monospace; border:1px solid #0ff3; }
-                                    pre { background:#0f1a24; padding:1.5rem; border-radius:20px; border:1px solid #0ff; overflow-x:auto; box-shadow:0 0 20px #0ff2; }
-                                    .header-glow { text-align:center; margin-bottom:2rem; font-size:1.2rem; color:#0ff; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:4px; opacity:0.8; }
-                                </style>
-                                </head>
-                                <body><div class="cyber-container"><div class="header-glow"><i class="fas fa-brain"></i> NEURAL INTERFACE <i class="fas fa-microchip"></i></div>${html}</div></body>
-                                </html>
-                            `);
-                            win.document.close();
-                        } catch (err) { alert('加载失败: ' + err.message); }
+                    for (let idx = 0; idx < articles.length; idx++) {
+                        const article = articles[idx];
+                        const card = document.createElement('article');
+                        card.className = 'blog-card';
+                        card.style.setProperty('--order', idx);
+                        card.innerHTML = `
+                            <div class="blog-date"><i class="far fa-calendar-alt"></i> ${escapeHtml(article.date) || '未知'} · <i class="fas fa-tag"></i> ${escapeHtml(article.category) || '未分类'}</div>
+                            <h3 class="blog-title">${escapeHtml(article.title) || '无标题'}</h3>
+                            <p class="blog-excerpt">${escapeHtml(article.excerpt) || '……'}</p>
+                            <a href="#" class="read-link" data-filename="${escapeAttr(article.filename)}" data-title="${escapeAttr(article.title)}">读取更多 <i class="fas fa-arrow-right"></i></a>
+                        `;
+                        container.appendChild(card);
+                    }
+
+                    // 绑定阅读事件（带科技新窗）
+                    document.querySelectorAll('.read-link').forEach(link => {
+                        link.addEventListener('click', async (e) => {
+                            e.preventDefault();
+                            const filename = link.dataset.filename;
+                            const title = link.dataset.title;
+                            if (!filename) { alert('未指定文章文件'); return; }
+                            try {
+                                const mdResp = await fetch(`date/${filename}`);
+                                if (!mdResp.ok) { alert('读取失败'); return; }
+                                const mdText = await mdResp.text();
+                                const html = marked.parse(mdText);
+                                const win = window.open('', '_blank');
+                                win.document.write(`
+                                    <!DOCTYPE html>
+                                    <html>
+                                    <head><meta charset="UTF-8"><title>${title} · 赛博阅读</title>
+                                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
+                                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                                    <style>
+                                        * { margin:0; padding:0; box-sizing:border-box; }
+                                        body { background:#0a0c12; color:#e0f0ff; font-family:'Inter',sans-serif; padding:2rem; position:relative; }
+                                        body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background-image:linear-gradient(rgba(0,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,0.02) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; animation: drift 20s linear infinite; }
+                                        @keyframes drift { 0%{background-position:0 0;} 100%{background-position:40px 40px;} }
+                                        .cyber-container { position:relative; z-index:2; max-width:900px; margin:0 auto; background:rgba(10,20,30,0.7); backdrop-filter:blur(12px); border:2px solid rgba(0,255,255,0.3); border-radius:32px; padding:2.5rem; box-shadow:0 0 40px rgba(0,255,255,0.2); animation:fadeScale 0.3s ease; }
+                                        @keyframes fadeScale { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
+                                        h1,h2,h3 { color:#a0f0ff; border-bottom:1px solid #0ff3; padding-bottom:0.5rem; margin:1.5rem 0 1rem; text-shadow:0 0 8px cyan; }
+                                        p { margin:1.2rem 0; color:#cef0ff; }
+                                        code { background:#1a2a3a; color:#ffb0e0; padding:0.2rem 0.5rem; border-radius:8px; font-family:'Space Mono',monospace; border:1px solid #0ff3; }
+                                        pre { background:#0f1a24; padding:1.5rem; border-radius:20px; border:1px solid #0ff; overflow-x:auto; box-shadow:0 0 20px #0ff2; }
+                                        .header-glow { text-align:center; margin-bottom:2rem; font-size:1.2rem; color:#0ff; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:4px; }
+                                    </style>
+                                    </head>
+                                    <body><div class="cyber-container"><div class="header-glow"><i class="fas fa-brain"></i> NEURAL INTERFACE <i class="fas fa-microchip"></i></div>${html}</div></body>
+                                    </html>
+                                `);
+                                win.document.close();
+                            } catch (err) { alert('加载失败: ' + err.message); }
+                        });
                     });
-                });
-            } catch (err) {
-                container.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle"></i> 神经链接失败: ${err.message}</div>`;
+                } catch (err) {
+                    container.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle"></i> 神经链接失败: ${err.message}</div>`;
+                }
             }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+            function escapeAttr(str) {
+                if (!str) return '';
+                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            loadArticles();
         })();
     </script>
 </body>
