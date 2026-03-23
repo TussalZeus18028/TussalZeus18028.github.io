@@ -14,6 +14,13 @@
         "excerpt": "开源的BCI框架支持意念打字与无人机群控制。包含完整的SDK文档及示例。"
     },
     {
+        "filename": "test.md",
+        "title": "测试文章",
+        "date": "2026.03.22",
+        "category": "BIOHACK",
+        "excerpt": "测试测试!"
+    },
+    {
         "filename": "edge-render.md",
         "title": "Web3 边缘渲染网络：白皮书草案",
         "date": "2026.02.28",

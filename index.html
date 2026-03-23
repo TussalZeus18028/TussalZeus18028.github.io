@@ -3,275 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>赛博枢纽 · 极客下载站 · 全量版 · 动态觉醒</title>
-    <!-- 科技感字体 & 图标库 (与主页保持一致) -->
+    <title>全部下载 · 量子仓库 · 动态网格</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        /* ===== 全局高科技风格 ===== */
+        /* ===== CSS 变量（双主题，与主页完全一致）===== */
+        :root {
+            --bg-primary: #000;
+            --bg-secondary: #111;
+            --card-bg: rgba(17, 17, 17, 0.85);
+            --card-border: rgba(51, 51, 51, 0.6);
+            --text-primary: #eee;
+            --text-secondary: #a6a6a6;
+            --accent-cyan: #ffa300;
+            --accent-magenta: #ff9285;
+            --accent-blue: #ffbe46;
+            --grid-color: #333;
+            --hero-glow: 0 20px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,163,0,0.2) inset, 0 0 30px rgba(255,146,133,0.3);
+            --btn-hover: #ffa300;
+            --link-color: #ffab1a;
+            --shadow-color: rgba(255,163,0,0.3);
+            --scroll-thumb: linear-gradient(#ffa300, #ff9285);
+            --particle-color: rgba(255,163,0,0.4);
+        }
+        body.light {
+            --bg-primary: #f3f3f3;
+            --bg-secondary: #fff0ed;
+            --card-bg: rgba(255, 240, 237, 0.92);
+            --card-border: rgba(232, 232, 232, 0.9);
+            --text-primary: #1b2f51;
+            --text-secondary: #5e5e5e;
+            --accent-cyan: #0052d9;
+            --accent-magenta: #f6685d;
+            --accent-blue: #0d429a;
+            --grid-color: #c6c6c6;
+            --hero-glow: 0 20px 40px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,82,217,0.2) inset, 0 0 30px rgba(0,82,217,0.2);
+            --btn-hover: #0052d9;
+            --link-color: #0052d9;
+            --shadow-color: rgba(0,82,217,0.2);
+            --scroll-thumb: linear-gradient(#0052d9, #f6685d);
+            --particle-color: rgba(0,82,217,0.3);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: #0a0c12;
+            background-color: var(--bg-primary);
             font-family: 'Inter', sans-serif;
-            color: #e0f0ff;
+            color: var(--text-primary);
             line-height: 1.6;
             position: relative;
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.2s ease;
             cursor: default;
         }
-        /* 动态流动网格背景 (增强动效1) */
-        body::before {
-            content: "";
+        /* Canvas 动态网格背景层 */
+        #dynamicCanvas {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 0;
-            animation: driftGrid 20s linear infinite;
-        }
-        @keyframes driftGrid {
-            0% { background-position: 0 0; }
-            100% { background-position: 40px 40px; }
-        }
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 180, 255, 0.08), transparent 70%);
             pointer-events: none;
-            z-index: 0;
         }
-        /* 扫描光晕 (背景呼吸) */
-        .global-scan {
+        /* 鼠标跟随光晕层 */
+        .cursor-glow {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(125deg, rgba(0,255,255,0) 0%, rgba(0,255,255,0.02) 40%, rgba(255,0,200,0.01) 100%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%);
+            border-radius: 50%;
             pointer-events: none;
-            z-index: 1;
-            animation: scanPulse 8s infinite alternate;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s linear;
+            filter: blur(18px);
+            opacity: 0.25;
         }
-        @keyframes scanPulse {
-            0% { opacity: 0.2; }
-            100% { opacity: 0.6; }
-        }
+        body.light .cursor-glow { opacity: 0.15; }
+
         .wrapper {
             position: relative;
             z-index: 2;
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem 1.5rem;
-            backdrop-filter: blur(1px);
         }
-        /* 头部全息卡 + 悬浮光晕增强 */
-        .hero {
-            background: rgba(15, 25, 35, 0.6);
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 100;
+            background: var(--card-bg);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 255, 255, 0.35);
-            border-radius: 32px;
-            padding: 2.5rem 2rem;
-            margin-bottom: 3rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 255, 255, 0.2) inset, 0 0 30px rgba(0, 180, 255, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 60px;
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            transition: box-shadow 0.3s, transform 0.2s;
-            animation: heroGlow 5s infinite alternate;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        @keyframes heroGlow {
-            0% { box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(0, 255, 255, 0.2) inset, 0 0 30px rgba(0, 180, 255, 0.3); }
-            100% { box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 0 2px rgba(0, 255, 255, 0.5) inset, 0 0 50px rgba(0, 200, 255, 0.6); }
-        }
-        /* 头像 3D 旋转光环 + 脉冲 (增强动效2) */
-        .avatar {
-            width: 110px; height: 110px;
-            background: linear-gradient(145deg, #00ccff, #a020f0);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4.5rem;
-            color: #0a0c12;
-            box-shadow: 0 0 30px #00ffffaa, 0 0 10px #8a2be2 inset;
-            border: 2px solid #b0f0ff;
-            position: relative;
-            transition: transform 0.2s;
-            animation: avatarPulse 3s infinite ease-in-out;
-        }
-        .avatar:hover {
+        .theme-toggle:hover {
+            border-color: var(--accent-cyan);
             transform: scale(1.02);
-            animation: avatarGlow 0.8s infinite alternate;
         }
-        @keyframes avatarPulse {
-            0% { box-shadow: 0 0 0 0 #0ff, 0 0 10px #8a2be2 inset; }
-            70% { box-shadow: 0 0 0 12px rgba(0, 255, 255, 0.3), 0 0 20px #ff44e6 inset; }
-            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0), 0 0 10px #8a2be2 inset; }
-        }
-        @keyframes avatarGlow {
-            from { filter: drop-shadow(0 0 5px cyan); }
-            to { filter: drop-shadow(0 0 20px #ff66ff); }
-        }
-        /* 光环旋转伪元素 */
-        .avatar::after {
-            content: "";
-            position: absolute;
-            top: -8px; left: -8px; right: -8px; bottom: -8px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, cyan, magenta, cyan);
-            opacity: 0.45;
-            z-index: -1;
-            animation: spinRing 5s linear infinite;
-        }
-        @keyframes spinRing {
-            100% { transform: rotate(360deg); }
-        }
-
-        .hero-text h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #a0f0ff, #ffffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px #00ccff;
-            animation: titleGlitch 4s infinite;
-        }
-        @keyframes titleGlitch {
-            0%,100% { text-shadow: 0 0 5px cyan; }
-            25% { text-shadow: -1px 0 #ff44e6, 1px 1px cyan; }
-            75% { text-shadow: 1px -1px cyan, -1px 0 #ff44e6; }
-        }
-        .section-title {
-            font-size: 2rem;
-            font-weight: 600;
-            margin: 2.5rem 0 1.8rem 0;
+        /* 返回链接 */
+        .back-link {
             display: inline-block;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid #0ff;
+            margin-bottom: 2rem;
+            color: var(--accent-cyan);
+            font-size: 1.2rem;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+            font-family: 'Space Mono', monospace;
+        }
+        .back-link:hover {
+            border-bottom-color: var(--accent-cyan);
+            text-shadow: 0 0 8px var(--shadow-color);
+        }
+        /* 页面标题 + 扫描线动效 */
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
             text-transform: uppercase;
             letter-spacing: 3px;
-            text-shadow: 0 0 8px cyan;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border-left: 6px solid var(--accent-cyan);
+            padding-left: 1.5rem;
             position: relative;
             overflow: hidden;
         }
-        /* 标题扫描光线动效 (增强动效3) */
-        .section-title::before {
-            content: "///";
-            margin-right: 12px;
-            color: #0ff;
-            font-weight: 400;
-            opacity: 0.8;
-        }
-        .section-title::after {
+        .page-title::after {
             content: "";
             position: absolute;
-            bottom: 0;
+            bottom: -5px;
             left: -100%;
             width: 80%;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #0ff, #ff44e6, transparent);
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-magenta), transparent);
             animation: titleSweep 3s infinite linear;
         }
         @keyframes titleSweep {
             0% { left: -100%; }
             100% { left: 120%; }
         }
-
-        /* 网格布局卡片 + 入场淡入上升动效 (增强动效4) */
-        .blog-grid, .download-grid {
+        /* 下载网格布局 */
+        .download-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.8rem;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
-        .blog-card, .download-card, .more-card {
-            background: rgba(10, 20, 28, 0.7);
+        /* 卡片样式 */
+        .download-card {
+            background: var(--card-bg);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(0, 255, 255, 0.3);
+            border: 1px solid var(--card-border);
             border-radius: 24px;
             padding: 1.8rem 1.5rem;
             transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
             opacity: 0;
             transform: translateY(30px);
             animation: cardRise 0.5s ease forwards;
-            animation-delay: calc(var(--order, 0) * 0.08s);
+            animation-delay: calc(var(--order, 0) * 0.05s);
         }
-        @keyframes cardRise {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        /* 微光边框流动 */
-        .blog-card::before, .download-card::before, .more-card::before {
+        @keyframes cardRise { to { opacity: 1; transform: translateY(0); } }
+        .download-card::before {
             content: "";
             position: absolute;
             top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, cyan, magenta, cyan);
+            background: linear-gradient(45deg, var(--accent-cyan), var(--accent-magenta), var(--accent-cyan));
             border-radius: 26px;
             z-index: -1;
             opacity: 0;
             transition: opacity 0.4s;
         }
-        .blog-card:hover::before, .download-card:hover::before, .more-card:hover::before {
-            opacity: 0.25;
-        }
-        .blog-card:hover, .download-card:hover, .more-card:hover {
+        .download-card:hover::before { opacity: 0.25; }
+        .download-card:hover {
             transform: translateY(-6px) scale(1.01);
-            border-color: #0ff;
-            box-shadow: 0 0 35px rgba(0, 255, 255, 0.6);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 35px var(--shadow-color);
         }
-        /* 卡片悬浮发光条纹 */
-        .blog-card::after, .download-card::after, .more-card::after {
+        .download-card::after {
             content: "";
             position: absolute;
             top: 0; left: -100%;
             width: 100%; height: 4px;
-            background: linear-gradient(90deg, transparent, #0ff, transparent);
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
             transition: left 0.6s;
         }
-        .blog-card:hover::after, .download-card:hover::after, .more-card:hover::after {
-            left: 100%;
+        .download-card:hover::after { left: 100%; }
+        .file-icon {
+            font-size: 3.2rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 8px var(--shadow-color));
         }
-        /* 更多卡片特殊动态 */
-        .more-card {
+        .file-name {
+            font-size: 1.7rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .file-meta {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            font-family: 'Space Mono', monospace;
+            color: var(--accent-cyan);
+            border-bottom: 1px dashed var(--card-border);
+            padding-bottom: 0.8rem;
+            margin: 1rem 0 1.5rem;
+        }
+        .download-btn {
+            background: transparent;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.9rem 0;
+            border-radius: 60px;
+            cursor: pointer;
+            display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            background: rgba(20, 30, 45, 0.9);
-            border: 2px dashed #0ff;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .more-card .more-icon {
-            font-size: 3rem;
-            color: #0ff;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 0 10px cyan);
-            animation: bounceSoft 2s infinite;
-        }
-        @keyframes bounceSoft {
-            0%,100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); filter: drop-shadow(0 0 18px magenta); }
-        }
-        /* 下载按钮脉冲 + 波纹 (增强动效5) */
-        .download-btn {
-            background: transparent; border: 2px solid #0ff; color: #0ff; font-size: 1.1rem; font-weight: 600;
-            padding: 0.9rem 0; border-radius: 60px; cursor: pointer; transition: all 0.25s;
-            display: flex; align-items: center; justify-content: center; gap: 10px; text-transform: uppercase;
-            letter-spacing: 1.5px; margin-top: auto; box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
-            background-color: rgba(0, 255, 255, 0.03); text-decoration: none;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: auto;
+            box-shadow: 0 0 12px var(--shadow-color);
+            background-color: rgba(0, 0, 0, 0.03);
+            text-decoration: none;
+            transition: all 0.25s;
             position: relative;
             overflow: hidden;
         }
@@ -281,9 +261,10 @@
             top: 50%; left: 50%;
             width: 0; height: 0;
             border-radius: 50%;
-            background: rgba(0, 255, 255, 0.4);
+            background: var(--accent-cyan);
             transform: translate(-50%, -50%);
             transition: width 0.5s, height 0.5s;
+            opacity: 0.4;
         }
         .download-btn:active::before {
             width: 280px;
@@ -291,356 +272,284 @@
             opacity: 0;
         }
         .download-btn:hover {
-            background: #0ff; color: #0a0c12; box-shadow: 0 0 35px cyan, 0 0 15px #ff44e6; border-color: #0ff;
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            box-shadow: 0 0 35px var(--accent-cyan);
             transform: scale(1.02);
-            letter-spacing: 2px;
         }
-        /* 鼠标跟随光晕 (增强动效6) */
-        .cursor-glow {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.2) 0%, rgba(0, 255, 255, 0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.05s linear;
-            filter: blur(18px);
-            opacity: 0.5;
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--accent-cyan);
+            font-size: 1.5rem;
+            font-family: 'Space Mono', monospace;
         }
+        .error-message {
+            color: var(--accent-magenta);
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid var(--accent-magenta);
+            border-radius: 24px;
+            background: rgba(0,0,0,0.3);
+        }
+        body.light .error-message { background: rgba(0,0,0,0.05); }
         .footer {
-            margin-top: 5rem; text-align: center; padding: 2rem 0 1rem;
-            border-top: 1px solid rgba(0, 255, 255, 0.25); color: #5d9eb9;
-            font-family: 'Space Mono', monospace; position: relative;
+            margin-top: 4rem;
+            text-align: center;
+            padding: 2rem 0 1rem;
+            border-top: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+            position: relative;
         }
         .footer::before {
             content: ""; position: absolute; top: -2px; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #0ff, #ff44e6, #0ff, transparent); opacity: 0.6;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-magenta), var(--accent-cyan), transparent);
+            opacity: 0.6;
             animation: footerFlow 4s infinite alternate;
         }
         @keyframes footerFlow {
             0% { opacity: 0.2; background-position: -200px; }
             100% { opacity: 1; background-position: 200px; }
         }
-        .glitch { color: #0ff; font-weight: 600; animation: glitch 3s infinite; }
-        @keyframes glitch {
-            0%,100% { opacity: 1; text-shadow: 0 0 5px #0ff, 0 0 15px #0ff; }
-            33% { text-shadow: -2px 0 #ff44e6, 2px 2px #0ff; }
-            66% { text-shadow: 2px -2px #0ff, -2px 2px #ff44e6; }
+        .glitch {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            animation: glitch 3s infinite;
         }
-        .loading { text-align: center; padding: 3rem; color: #0ff; font-size: 1.5rem; font-family: 'Space Mono', monospace; }
-        .error-message { color: #ff88aa; padding: 2rem; text-align: center; border: 1px solid #ff44e6; border-radius: 24px; background: rgba(30, 0, 20, 0.5); }
-        .back-link { margin-bottom: 2rem; display: inline-block; color: #0ff; font-size: 1.2rem; text-decoration: none; border-bottom: 2px solid transparent; transition: 0.2s; }
-        .back-link:hover { border-bottom-color: #0ff; }
-        /* 滚动条科技感 */
-        ::-webkit-scrollbar { width: 8px; background: #0a0c12; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(#0ff, #ff44e6); border-radius: 10px; }
+        @keyframes glitch {
+            0%,100% { text-shadow: 0 0 5px var(--accent-cyan), 0 0 15px var(--accent-magenta); }
+            33% { text-shadow: -2px 0 var(--accent-magenta), 2px 2px var(--accent-cyan); }
+            66% { text-shadow: 2px -2px var(--accent-cyan), -2px 2px var(--accent-magenta); }
+        }
+        ::-webkit-scrollbar { width: 8px; background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
         @media (max-width: 600px) {
-            .hero { flex-direction: column; text-align: center; padding: 1.8rem; }
-            .hero-text h1 { font-size: 2rem; }
+            .theme-toggle { top: 1rem; right: 1rem; padding: 0.4rem 0.9rem; font-size: 0.8rem; }
             .cursor-glow { display: none; }
+            .page-title { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
-<div class="global-scan"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
-<div class="wrapper">
-    <!-- 个人全息档案 (由text.json驱动) -->
-    <header class="hero">
-        <div class="avatar"><i class="fas fa-robot"></i></div>
-        <div class="hero-text">
-            <h1 id="hero-name">TussalZeus18028</h1>
-            <div class="hero-tagline">
-                <span id="tag1"><i class="fas fa-microchip"></i> AI Architect</span>
-                <span id="tag2"><i class="fas fa-cubes"></i> Quantum tinkerer</span>
-                <span id="tag3"><i class="fas fa-bolt"></i> CyberNomad</span>
-            </div>
-            <p id="hero-desc" style="color: #9fc9ff; max-width: 550px; margin-top: 0.8rem; border-left: 3px solid #0ff; padding-left: 1rem;">
-                解码未来 · 分享开源精神与深度思考。
-            </p>
+    <canvas id="dynamicCanvas"></canvas>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i> <span id="themeLabel">暗色模式</span>
+    </div>
+    <div class="wrapper">
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回主站</a>
+        <h1 class="page-title"><i class="fas fa-database"></i> 全部下载 · 量子仓库</h1>
+        <div id="all-downloads" class="download-grid">
+            <div class="loading"><i class="fas fa-spinner fa-pulse"></i> 扫描文件系统...</div>
         </div>
-    </header>
+        <footer class="footer">
+            <p><span class="glitch">[ root@repository ]</span>  —  [共 <span id="download-count">0</span> 个文件]</p>
+        </footer>
+    </div>
 
-    <!-- 博客文章区 -->
-    <section>
-        <h2 class="section-title">LATEST THOUGHTS</h2>
-        <div id="blog-posts" class="blog-grid">
-            <div class="loading"><i class="fas fa-spinner fa-pulse"></i> 正在链接神经网格...</div>
-        </div>
-    </section>
-
-    <!-- 下载功能区 -->
-    <section>
-        <h2 class="section-title">NEURAL DOWNLOADS</h2>
-        <div id="download-cards" class="download-grid">
-            <div class="loading"><i class="fas fa-spinner fa-pulse"></i> 扫描量子仓库...</div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <p id="footer-line1"><span class="glitch">[ root@nova-blog ]</span>  —  所有数据实时读取  —  <i class="fas fa-satellite-dish"></i>  ORBIT 2026</p>
-        <p id="footer-line2" style="margin-top: 0.5rem; font-size: 0.8rem;">🛸 修改 date/text.json 调整文字 | 超过三项显示“更多”</p>
-    </footer>
-</div>
-
-<script>
-    (function() {
-        // 鼠标跟随光晕增强 (轻量)
-        const glow = document.getElementById('cursorGlow');
-        if (glow && window.innerWidth > 600) {
-            document.addEventListener('mousemove', (e) => {
-                glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-                glow.style.opacity = '0.65';
+    <script>
+        (function() {
+            // ========== 主题切换（localStorage）==========
+            const toggleBtn = document.getElementById('themeToggle');
+            const themeLabel = document.getElementById('themeLabel');
+            const root = document.body;
+            function setTheme(theme) {
+                if (theme === 'light') {
+                    root.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                    themeLabel.innerHTML = '<i class="fas fa-sun"></i> 亮色模式';
+                } else {
+                    root.classList.remove('light');
+                    localStorage.setItem('theme', 'dark');
+                    themeLabel.innerHTML = '<i class="fas fa-moon"></i> 暗色模式';
+                }
+                if (window.gridSystem) window.gridSystem.updateTheme();
+            }
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') setTheme('light');
+            else setTheme('dark');
+            toggleBtn.addEventListener('click', () => {
+                if (root.classList.contains('light')) setTheme('dark');
+                else setTheme('light');
             });
-            document.addEventListener('mouseleave', () => {
-                glow.style.opacity = '0';
-            });
-        }
 
-        // ---------- 辅助函数 ----------
-        function showError(containerId, message) {
-            const container = document.getElementById(containerId);
-            if (container) container.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle"></i> ${message}</div>`;
-        }
+            // ========== 动态网格 + 粒子系统 (Canvas) ==========
+            const canvas = document.getElementById('dynamicCanvas');
+            let ctx = canvas.getContext('2d');
+            let width, height;
+            let offsetX = 0, offsetY = 0;
+            const GRID_SIZE = 80;
+            const SPEED = 0.45;
+            let particles = [];
+            const PARTICLE_COUNT = 80;
+            let mouseX = -1000, mouseY = -1000;
 
-        // 炫酷的新窗口渲染
-        function renderMarkdownInNewWindow(title, mdHtml) {
-            const win = window.open('', '_blank');
-            win.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>${title} · 赛博阅读</title>
-                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-                    <style>
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body {
-                            background-color: #0a0c12;
-                            font-family: 'Inter', sans-serif;
-                            color: #e0f0ff;
-                            line-height: 1.7;
-                            min-height: 100vh;
-                            position: relative;
-                            padding: 2rem;
-                        }
-                        body::before {
-                            content: "";
-                            position: fixed;
-                            top: 0; left: 0; width: 100%; height: 100%;
-                            background-image: linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
-                                              linear-gradient(90deg, rgba(0, 255, 255, 0.02) 1px, transparent 1px);
-                            background-size: 40px 40px;
-                            pointer-events: none;
-                            z-index: 0;
-                            animation: drift 20s linear infinite;
-                        }
-                        @keyframes drift { 0%{background-position:0 0;} 100%{background-position:40px 40px;} }
-                        .cyber-container {
-                            position: relative;
-                            z-index: 2;
-                            max-width: 900px;
-                            margin: 0 auto;
-                            background: rgba(10, 20, 30, 0.7);
-                            backdrop-filter: blur(12px);
-                            border: 2px solid rgba(0, 255, 255, 0.3);
-                            border-radius: 32px;
-                            padding: 2.5rem;
-                            box-shadow: 0 0 40px rgba(0, 255, 255, 0.2), 0 0 0 1px rgba(0, 255, 255, 0.3) inset;
-                            animation: fadeScale 0.3s ease;
-                        }
-                        @keyframes fadeScale { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
-                        h1, h2, h3 { color: #a0f0ff; border-bottom: 1px solid #0ff3; padding-bottom: 0.5rem; margin: 1.5rem 0 1rem; text-shadow: 0 0 8px cyan; }
-                        p { margin: 1.2rem 0; color: #cef0ff; }
-                        code { background: #1a2a3a; color: #ffb0e0; padding: 0.2rem 0.5rem; border-radius: 8px; font-family: 'Space Mono', monospace; border: 1px solid #0ff3; }
-                        pre { background: #0f1a24; padding: 1.5rem; border-radius: 20px; border: 1px solid #0ff; overflow-x: auto; box-shadow: 0 0 20px #0ff2; }
-                        a { color: #0ff; text-decoration: none; border-bottom: 1px dashed; }
-                        .header-glow { text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: #0ff; font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 4px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="cyber-container">
-                        <div class="header-glow"><i class="fas fa-brain"></i>  NEURAL INTERFACE  <i class="fas fa-microchip"></i></div>
-                        ${mdHtml}
-                        <div style="text-align:center; margin-top:3rem; color:#4f9fbf; font-family:'Space Mono'">
-                            <i class="fas fa-robot"></i>  EOF  ·  ${new Date().toLocaleDateString()}
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `);
-            win.document.close();
-        }
+            function getGridColor() { return getComputedStyle(document.body).getPropertyValue('--grid-color').trim(); }
+            function getAccentColor() { return getComputedStyle(document.body).getPropertyValue('--accent-cyan').trim(); }
+            function getParticleColor() { return getComputedStyle(document.body).getPropertyValue('--particle-color').trim(); }
 
-        // 加载text.json
-        async function loadTextConfig() {
-            try {
-                const resp = await fetch('date/text.json');
-                if (!resp.ok) return;
-                const texts = await resp.json();
-                if (texts.name) document.getElementById('hero-name').textContent = texts.name;
-                if (texts.tagline && Array.isArray(texts.tagline)) {
-                    const tags = [document.getElementById('tag1'), document.getElementById('tag2'), document.getElementById('tag3')];
-                    tags.forEach((el, idx) => { if (el && texts.tagline[idx]) el.innerHTML = `<i class="fas ${idx===0?'fa-microchip':idx===1?'fa-cubes':'fa-bolt'}"></i> ${texts.tagline[idx]}`; });
-                }
-                if (texts.description) document.getElementById('hero-desc').textContent = texts.description;
-                if (texts.footer_line1) {
-                    const parts = texts.footer_line1.split('—');
-                    document.getElementById('footer-line1').innerHTML = `<span class="glitch">${parts[0]}</span> — ${parts[1] || ''} <i class="fas fa-satellite-dish"></i> ${parts[2] || ''}`;
-                }
-                if (texts.footer_line2) document.getElementById('footer-line2').textContent = texts.footer_line2;
-            } catch (e) { /* 保留默认 */ }
-        }
-
-        // 加载文章 (最多3篇+更多卡片)
-        async function loadBlogPosts() {
-            const container = document.getElementById('blog-posts');
-            if (!container) return;
-            try {
-                const resp = await fetch('date/articles.json');
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                const articles = await resp.json();
-                container.innerHTML = '';
-
-                if (!articles || articles.length === 0) {
-                    container.innerHTML = '<div class="error-message">📭 暂未发现思想碎片</div>';
-                    return;
-                }
-
-                const showMore = articles.length > 3;
-                const displayItems = showMore ? articles.slice(0, 3) : articles;
-
-                for (let idx = 0; idx < displayItems.length; idx++) {
-                    const article = displayItems[idx];
-                    const card = document.createElement('article');
-                    card.className = 'blog-card';
-                    card.style.setProperty('--order', idx);
-                    card.innerHTML = `
-                        <div class="blog-date"><i class="far fa-calendar-alt"></i> ${article.date || '未知'} · <i class="fas fa-tag"></i> ${article.category || '未分类'}</div>
-                        <h3 class="blog-title">${escapeHtml(article.title) || '无标题'}</h3>
-                        <p class="blog-excerpt">${escapeHtml(article.excerpt) || '……'}</p>
-                        <a href="#" class="read-link" data-filename="${article.filename || ''}" data-title="${escapeAttr(article.title) || ''}">读取更多 <i class="fas fa-arrow-right"></i></a>
-                    `;
-                    container.appendChild(card);
-                }
-
-                // 绑定阅读事件
-                document.querySelectorAll('.read-link').forEach(link => {
-                    link.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        const filename = link.dataset.filename;
-                        const title = link.dataset.title;
-                        if (!filename) { alert('未指定文章文件'); return; }
-                        try {
-                            const mdResp = await fetch(`date/${filename}`);
-                            if (!mdResp.ok) { alert('读取失败'); return; }
-                            const mdText = await mdResp.text();
-                            const html = marked.parse(mdText);
-                            renderMarkdownInNewWindow(title, html);
-                        } catch (err) { alert('加载失败: ' + err.message); }
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        radius: Math.random() * 2 + 1,
+                        speedX: (Math.random() - 0.5) * 0.3,
+                        speedY: (Math.random() - 0.5) * 0.3,
+                        alpha: Math.random() * 0.6 + 0.2
                     });
+                }
+            }
+            function updateParticles() {
+                for (let p of particles) {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+                }
+            }
+            function drawGrid() {
+                if (!ctx) return;
+                const gridColor = getGridColor();
+                const accentColor = getAccentColor();
+                offsetX = (offsetX + SPEED) % GRID_SIZE;
+                offsetY = (offsetY + SPEED) % GRID_SIZE;
+                ctx.clearRect(0, 0, width, height);
+                // 粒子
+                ctx.save();
+                const particleColor = getParticleColor();
+                for (let p of particles) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particleColor;
+                    ctx.fill();
+                }
+                ctx.restore();
+                // 网格线
+                ctx.beginPath();
+                ctx.strokeStyle = gridColor;
+                ctx.lineWidth = 1;
+                const startX = offsetX - GRID_SIZE;
+                const startY = offsetY - GRID_SIZE;
+                const cols = Math.ceil(width / GRID_SIZE) + 2;
+                const rows = Math.ceil(height / GRID_SIZE) + 2;
+                for (let i = 0; i <= cols; i++) {
+                    const x = startX + i * GRID_SIZE;
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, height);
+                    ctx.stroke();
+                }
+                for (let i = 0; i <= rows; i++) {
+                    const y = startY + i * GRID_SIZE;
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(width, y);
+                    ctx.stroke();
+                }
+                // 高亮鼠标所在网格
+                if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+                    const gridX = Math.floor((mouseX - offsetX + GRID_SIZE) / GRID_SIZE);
+                    const gridY = Math.floor((mouseY - offsetY + GRID_SIZE) / GRID_SIZE);
+                    const cellLeft = offsetX + gridX * GRID_SIZE;
+                    const cellTop = offsetY + gridY * GRID_SIZE;
+                    ctx.fillStyle = accentColor;
+                    ctx.globalAlpha = 0.35;
+                    ctx.fillRect(cellLeft, cellTop, GRID_SIZE, GRID_SIZE);
+                    ctx.globalAlpha = 1.0;
+                    ctx.beginPath();
+                    ctx.strokeStyle = accentColor;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(cellLeft, cellTop, GRID_SIZE, GRID_SIZE);
+                }
+            }
+            function animate() {
+                if (!ctx) return;
+                updateParticles();
+                drawGrid();
+                requestAnimationFrame(animate);
+            }
+            function onMouseMove(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                mouseX = (e.clientX - rect.left) * scaleX;
+                mouseY = (e.clientY - rect.top) * scaleY;
+            }
+            function resizeCanvas() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                initParticles();
+            }
+            window.gridSystem = { updateTheme: () => {} };
+            function initCanvas() {
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                document.addEventListener('mousemove', onMouseMove);
+                animate();
+            }
+            initCanvas();
+
+            // ========== 鼠标跟随光晕 ==========
+            const glow = document.getElementById('cursorGlow');
+            if (glow && window.innerWidth > 600) {
+                document.addEventListener('mousemove', (e) => {
+                    glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+                    glow.style.opacity = '0.45';
                 });
-
-                if (showMore) {
-                    const moreCard = document.createElement('div');
-                    moreCard.className = 'more-card';
-                    moreCard.style.setProperty('--order', displayItems.length);
-                    moreCard.innerHTML = `
-                        <div class="more-icon"><i class="fas fa-arrow-circle-right"></i></div>
-                        <div class="more-text">+${articles.length - 3} 篇深度文章</div>
-                        <div class="more-sub">点击探索全部</div>
-                    `;
-                    moreCard.addEventListener('click', () => { window.location.href = 'all-articles.html'; });
-                    container.appendChild(moreCard);
-                }
-            } catch (err) {
-                showError('blog-posts', `神经链接失败: ${err.message}`);
+                document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
             }
-        }
 
-        // 加载下载 (最多3项+更多卡片)
-        async function loadDownloads() {
-            const container = document.getElementById('download-cards');
-            if (!container) return;
-            try {
-                const resp = await fetch('download.json');
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                const downloads = await resp.json();
-                container.innerHTML = '';
+            // ========== 数据加载：全部下载 ==========
+            const container = document.getElementById('all-downloads');
+            const countSpan = document.getElementById('download-count');
 
-                if (!downloads || downloads.length === 0) {
-                    container.innerHTML = '<div class="error-message">🔌 下载库为空</div>';
-                    return;
-                }
-
-                const showMore = downloads.length > 3;
-                const displayItems = showMore ? downloads.slice(0, 3) : downloads;
-
-                for (let idx = 0; idx < displayItems.length; idx++) {
-                    const item = displayItems[idx];
-                    const card = document.createElement('div');
-                    card.className = 'download-card';
-                    card.style.setProperty('--order', idx);
-                    card.innerHTML = `
-                        <i class="fas ${item.icon || 'fa-file'} file-icon"></i>
-                        <div class="file-name">${escapeHtml(item.name || item.filename)}</div>
-                        <div class="file-meta"><span><i class="fas fa-database"></i> ${item.size || '?'}</span><span><i class="fas fa-shield-alt"></i> 下载</span></div>
-                        <p style="margin-bottom:1.5rem; color:#b0e0ff; font-size:0.95rem;">${escapeHtml(item.description || '一个神秘的文件')}</p>
-                        <a class="download-btn" href="Files/${item.filename}" download><i class="fas fa-download"></i> 获取文件</a>
-                    `;
-                    container.appendChild(card);
-                }
-
-                if (showMore) {
-                    const moreCard = document.createElement('div');
-                    moreCard.className = 'more-card';
-                    moreCard.style.setProperty('--order', displayItems.length);
-                    moreCard.innerHTML = `
-                        <div class="more-icon"><i class="fas fa-download"></i></div>
-                        <div class="more-text">+${downloads.length - 3} 个文件</div>
-                        <div class="more-sub">进入下载仓库</div>
-                    `;
-                    moreCard.addEventListener('click', () => { window.location.href = 'all-downloads.html'; });
-                    container.appendChild(moreCard);
-                }
-            } catch (err) {
-                showError('download-cards', `量子仓库连接失败: ${err.message}`);
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
             }
-        }
+            function escapeAttr(str) {
+                if (!str) return '';
+                return str.replace(/[&<>"]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[m]));
+            }
 
-        // 简单的防XSS辅助
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c;
-            });
-        }
-        function escapeAttr(str) {
-            if (!str) return '';
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        }
-
-        async function init() {
-            await loadTextConfig();
-            await Promise.all([loadBlogPosts(), loadDownloads()]);
-            // 给动态卡片再追加一点随机延迟感 (已经使用--order)
-            const allCards = document.querySelectorAll('.blog-card, .download-card, .more-card');
-            allCards.forEach((card, i) => {
-                if (!card.style.getPropertyValue('--order')) {
-                    card.style.setProperty('--order', i);
+            async function loadAllDownloads() {
+                try {
+                    const resp = await fetch('download.json');
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const downloads = await resp.json();
+                    if (!downloads || downloads.length === 0) {
+                        container.innerHTML = '<div class="error-message">🔌 仓库暂时为空</div>';
+                        return;
+                    }
+                    countSpan.textContent = downloads.length;
+                    container.innerHTML = '';
+                    for (let idx = 0; idx < downloads.length; idx++) {
+                        const item = downloads[idx];
+                        const card = document.createElement('div');
+                        card.className = 'download-card';
+                        card.style.setProperty('--order', idx);
+                        card.innerHTML = `
+                            <i class="fas ${escapeAttr(item.icon) || 'fa-file'} file-icon"></i>
+                            <div class="file-name">${escapeHtml(item.name) || escapeHtml(item.filename)}</div>
+                            <div class="file-meta"><span><i class="fas fa-database"></i> ${escapeHtml(item.size) || '?'}</span><span><i class="fas fa-shield-alt"></i> 下载</span></div>
+                            <p style="margin-bottom:1.5rem;">${escapeHtml(item.description) || '一个神秘的文件'}</p>
+                            <a class="download-btn" href="Files/${item.filename}" download><i class="fas fa-download"></i> 获取文件</a>
+                        `;
+                        container.appendChild(card);
+                    }
+                } catch (err) {
+                    container.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle"></i> 量子仓库连接失败: ${err.message}</div>`;
                 }
-            });
-        }
-        init();
-    })();
-</script>
+            }
+            loadAllDownloads();
+        })();
+    </script>
 </body>
 </html>

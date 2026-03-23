@@ -3,90 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>全部文章 · 赛博博客 · 动态觉醒</title>
-    <!-- 字体 & 图标库 (与主页一致) -->
+    <title>全部文章 · 赛博博客 · 动态网格</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        /* ========== 全局高科技风格 + 增强动效 ========== */
+        /* ===== CSS 变量（双主题，与主页完全一致）===== */
+        :root {
+            --bg-primary: #000;
+            --bg-secondary: #111;
+            --card-bg: rgba(17, 17, 17, 0.85);
+            --card-border: rgba(51, 51, 51, 0.6);
+            --text-primary: #eee;
+            --text-secondary: #a6a6a6;
+            --accent-cyan: #ffa300;
+            --accent-magenta: #ff9285;
+            --accent-blue: #ffbe46;
+            --grid-color: #333;
+            --hero-glow: 0 20px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,163,0,0.2) inset, 0 0 30px rgba(255,146,133,0.3);
+            --btn-hover: #ffa300;
+            --link-color: #ffab1a;
+            --shadow-color: rgba(255,163,0,0.3);
+            --scroll-thumb: linear-gradient(#ffa300, #ff9285);
+            --particle-color: rgba(255,163,0,0.4);
+        }
+        body.light {
+            --bg-primary: #f3f3f3;
+            --bg-secondary: #fff0ed;
+            --card-bg: rgba(255, 240, 237, 0.92);
+            --card-border: rgba(232, 232, 232, 0.9);
+            --text-primary: #1b2f51;
+            --text-secondary: #5e5e5e;
+            --accent-cyan: #0052d9;
+            --accent-magenta: #f6685d;
+            --accent-blue: #0d429a;
+            --grid-color: #c6c6c6;
+            --hero-glow: 0 20px 40px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,82,217,0.2) inset, 0 0 30px rgba(0,82,217,0.2);
+            --btn-hover: #0052d9;
+            --link-color: #0052d9;
+            --shadow-color: rgba(0,82,217,0.2);
+            --scroll-thumb: linear-gradient(#0052d9, #f6685d);
+            --particle-color: rgba(0,82,217,0.3);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: #0a0c12;
+            background-color: var(--bg-primary);
             font-family: 'Inter', sans-serif;
-            color: #e0f0ff;
+            color: var(--text-primary);
             line-height: 1.6;
+            position: relative;
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
+            transition: background-color 0.3s ease, color 0.2s ease;
             cursor: default;
         }
-        /* 动态流动网格背景 */
-        body::before {
-            content: "";
+        /* Canvas 动态网格背景层 */
+        #dynamicCanvas {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 0;
-            animation: driftGrid 20s linear infinite;
-        }
-        @keyframes driftGrid {
-            0% { background-position: 0 0; }
-            100% { background-position: 40px 40px; }
-        }
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 180, 255, 0.08), transparent 70%);
             pointer-events: none;
-            z-index: 0;
         }
-        /* 全局扫描光晕 */
-        .global-scan {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(125deg, rgba(0,255,255,0) 0%, rgba(0,255,255,0.02) 40%, rgba(255,0,200,0.01) 100%);
-            pointer-events: none;
-            z-index: 1;
-            animation: scanPulse 8s infinite alternate;
-        }
-        @keyframes scanPulse {
-            0% { opacity: 0.2; }
-            100% { opacity: 0.6; }
-        }
-        /* 鼠标跟随光晕 */
+        /* 鼠标跟随光晕层 */
         .cursor-glow {
             position: fixed;
             width: 300px;
             height: 300px;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.2) 0%, rgba(0, 255, 255, 0) 70%);
+            background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%);
             transition: transform 0.05s linear;
             filter: blur(18px);
-            opacity: 0.5;
+            opacity: 0.25;
         }
+        body.light .cursor-glow { opacity: 0.15; }
+
         .wrapper {
             position: relative;
             z-index: 2;
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem 1.5rem;
-            backdrop-filter: blur(1px);
+        }
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 100;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 60px;
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .theme-toggle:hover {
+            border-color: var(--accent-cyan);
+            transform: scale(1.02);
         }
         /* 返回链接 */
         .back-link {
             display: inline-block;
             margin-bottom: 2rem;
-            color: #0ff;
+            color: var(--accent-cyan);
             font-size: 1.2rem;
             text-decoration: none;
             border-bottom: 2px solid transparent;
@@ -94,8 +128,8 @@
             font-family: 'Space Mono', monospace;
         }
         .back-link:hover {
-            border-bottom-color: #0ff;
-            text-shadow: 0 0 8px cyan;
+            border-bottom-color: var(--accent-cyan);
+            text-shadow: 0 0 8px var(--shadow-color);
         }
         /* 页面标题 + 扫描线动效 */
         .page-title {
@@ -104,10 +138,10 @@
             margin-bottom: 2rem;
             text-transform: uppercase;
             letter-spacing: 3px;
-            background: linear-gradient(135deg, #0ff, #ff44e6);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            border-left: 6px solid #0ff;
+            border-left: 6px solid var(--accent-cyan);
             padding-left: 1.5rem;
             position: relative;
             overflow: hidden;
@@ -119,7 +153,7 @@
             left: -100%;
             width: 80%;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #0ff, #ff44e6, transparent);
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-magenta), transparent);
             animation: titleSweep 3s infinite linear;
         }
         @keyframes titleSweep {
@@ -133,60 +167,51 @@
             gap: 1.8rem;
             margin-bottom: 3rem;
         }
-        /* 卡片通用样式 + 入场动画 */
+        /* 卡片样式 */
         .blog-card {
-            background: rgba(10, 20, 28, 0.7);
+            background: var(--card-bg);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(0, 255, 255, 0.3);
+            border: 1px solid var(--card-border);
             border-radius: 24px;
             padding: 1.8rem 1.5rem;
             transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
             opacity: 0;
             transform: translateY(30px);
             animation: cardRise 0.5s ease forwards;
-            animation-delay: calc(var(--order, 0) * 0.08s);
+            animation-delay: calc(var(--order, 0) * 0.05s);
         }
-        @keyframes cardRise {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        @keyframes cardRise { to { opacity: 1; transform: translateY(0); } }
         .blog-card::before {
             content: "";
             position: absolute;
             top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, cyan, magenta, cyan);
+            background: linear-gradient(45deg, var(--accent-cyan), var(--accent-magenta), var(--accent-cyan));
             border-radius: 26px;
             z-index: -1;
             opacity: 0;
             transition: opacity 0.4s;
         }
-        .blog-card:hover::before {
-            opacity: 0.25;
-        }
+        .blog-card:hover::before { opacity: 0.25; }
         .blog-card:hover {
             transform: translateY(-6px) scale(1.01);
-            border-color: #0ff;
-            box-shadow: 0 0 35px rgba(0, 255, 255, 0.6);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 35px var(--shadow-color);
         }
         .blog-card::after {
             content: "";
             position: absolute;
             top: 0; left: -100%;
             width: 100%; height: 4px;
-            background: linear-gradient(90deg, transparent, #0ff, transparent);
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
             transition: left 0.6s;
         }
-        .blog-card:hover::after {
-            left: 100%;
-        }
+        .blog-card:hover::after { left: 100%; }
         .blog-date {
             font-family: 'Space Mono', monospace;
-            color: #00e0ff;
+            color: var(--accent-cyan);
             font-size: 0.9rem;
             margin-bottom: 0.8rem;
             display: flex;
@@ -196,18 +221,18 @@
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            background: linear-gradient(145deg, #fff, #b0f0ff);
+            background: linear-gradient(145deg, var(--text-primary), var(--accent-cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .blog-excerpt {
-            color: #aac8e0;
+            color: var(--text-secondary);
             margin: 1rem 0 1.5rem;
             font-size: 0.95rem;
         }
         .read-link {
             text-decoration: none;
-            color: #0ff;
+            color: var(--accent-cyan);
             font-weight: 500;
             display: inline-flex;
             align-items: center;
@@ -217,38 +242,37 @@
             cursor: pointer;
         }
         .read-link:hover {
-            border-bottom-color: #0ff;
-            text-shadow: 0 0 5px cyan;
+            border-bottom-color: var(--accent-cyan);
+            text-shadow: 0 0 5px var(--shadow-color);
         }
         .loading {
             text-align: center;
             padding: 3rem;
-            color: #0ff;
+            color: var(--accent-cyan);
             font-size: 1.5rem;
             font-family: 'Space Mono', monospace;
         }
         .error-message {
-            color: #ff88aa;
+            color: var(--accent-magenta);
             padding: 2rem;
             text-align: center;
-            border: 1px solid #ff44e6;
+            border: 1px solid var(--accent-magenta);
             border-radius: 24px;
-            background: rgba(30, 0, 20, 0.5);
+            background: rgba(0,0,0,0.3);
         }
+        body.light .error-message { background: rgba(0,0,0,0.05); }
         .footer {
             margin-top: 4rem;
             text-align: center;
             padding: 2rem 0 1rem;
-            border-top: 1px solid rgba(0, 255, 255, 0.25);
-            color: #5d9eb9;
+            border-top: 1px solid var(--card-border);
+            color: var(--text-secondary);
             font-family: 'Space Mono', monospace;
             position: relative;
         }
         .footer::before {
-            content: "";
-            position: absolute;
-            top: -2px; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #0ff, #ff44e6, #0ff, transparent);
+            content: ""; position: absolute; top: -2px; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-magenta), var(--accent-cyan), transparent);
             opacity: 0.6;
             animation: footerFlow 4s infinite alternate;
         }
@@ -257,36 +281,36 @@
             100% { opacity: 1; background-position: 200px; }
         }
         .glitch {
-            color: #0ff;
+            color: var(--accent-cyan);
             font-weight: 600;
             animation: glitch 3s infinite;
         }
         @keyframes glitch {
-            0%,100% { opacity: 1; text-shadow: 0 0 5px #0ff, 0 0 15px #0ff; }
-            33% { text-shadow: -2px 0 #ff44e6, 2px 2px #0ff; }
-            66% { text-shadow: 2px -2px #0ff, -2px 2px #ff44e6; }
+            0%,100% { text-shadow: 0 0 5px var(--accent-cyan), 0 0 15px var(--accent-magenta); }
+            33% { text-shadow: -2px 0 var(--accent-magenta), 2px 2px var(--accent-cyan); }
+            66% { text-shadow: 2px -2px var(--accent-cyan), -2px 2px var(--accent-magenta); }
         }
-        /* 滚动条 */
-        ::-webkit-scrollbar { width: 8px; background: #0a0c12; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(#0ff, #ff44e6); border-radius: 10px; }
+        ::-webkit-scrollbar { width: 8px; background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
         @media (max-width: 600px) {
+            .theme-toggle { top: 1rem; right: 1rem; padding: 0.4rem 0.9rem; font-size: 0.8rem; }
             .cursor-glow { display: none; }
             .page-title { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
-    <div class="global-scan"></div>
+    <canvas id="dynamicCanvas"></canvas>
     <div class="cursor-glow" id="cursorGlow"></div>
-
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i> <span id="themeLabel">暗色模式</span>
+    </div>
     <div class="wrapper">
         <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回主站</a>
         <h1 class="page-title"><i class="fas fa-archive"></i> 全部文章 · 神经档案</h1>
-
         <div id="all-articles" class="blog-grid">
             <div class="loading"><i class="fas fa-spinner fa-pulse"></i> 加载思想矩阵...</div>
         </div>
-
         <footer class="footer">
             <p><span class="glitch">[ root@archive ]</span>  —  共 <span id="article-count">0</span> 篇深度思考</p>
         </footer>
@@ -294,20 +318,201 @@
 
     <script>
         (function() {
-            // 鼠标跟随光晕
+            // ========== 主题切换（localStorage）==========
+            const toggleBtn = document.getElementById('themeToggle');
+            const themeLabel = document.getElementById('themeLabel');
+            const root = document.body;
+            function setTheme(theme) {
+                if (theme === 'light') {
+                    root.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                    themeLabel.innerHTML = '<i class="fas fa-sun"></i> 亮色模式';
+                } else {
+                    root.classList.remove('light');
+                    localStorage.setItem('theme', 'dark');
+                    themeLabel.innerHTML = '<i class="fas fa-moon"></i> 暗色模式';
+                }
+                if (window.gridSystem) window.gridSystem.updateTheme();
+            }
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') setTheme('light');
+            else setTheme('dark');
+            toggleBtn.addEventListener('click', () => {
+                if (root.classList.contains('light')) setTheme('dark');
+                else setTheme('light');
+            });
+
+            // ========== 动态网格 + 粒子系统 (Canvas) ==========
+            const canvas = document.getElementById('dynamicCanvas');
+            let ctx = canvas.getContext('2d');
+            let width, height;
+            let offsetX = 0, offsetY = 0;
+            const GRID_SIZE = 80;
+            const SPEED = 0.45;
+            let particles = [];
+            const PARTICLE_COUNT = 80;
+            let mouseX = -1000, mouseY = -1000;
+
+            function getGridColor() { return getComputedStyle(document.body).getPropertyValue('--grid-color').trim(); }
+            function getAccentColor() { return getComputedStyle(document.body).getPropertyValue('--accent-cyan').trim(); }
+            function getParticleColor() { return getComputedStyle(document.body).getPropertyValue('--particle-color').trim(); }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        radius: Math.random() * 2 + 1,
+                        speedX: (Math.random() - 0.5) * 0.3,
+                        speedY: (Math.random() - 0.5) * 0.3,
+                        alpha: Math.random() * 0.6 + 0.2
+                    });
+                }
+            }
+            function updateParticles() {
+                for (let p of particles) {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+                }
+            }
+            function drawGrid() {
+                if (!ctx) return;
+                const gridColor = getGridColor();
+                const accentColor = getAccentColor();
+                offsetX = (offsetX + SPEED) % GRID_SIZE;
+                offsetY = (offsetY + SPEED) % GRID_SIZE;
+                ctx.clearRect(0, 0, width, height);
+                // 粒子
+                ctx.save();
+                const particleColor = getParticleColor();
+                for (let p of particles) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particleColor;
+                    ctx.fill();
+                }
+                ctx.restore();
+                // 网格线
+                ctx.beginPath();
+                ctx.strokeStyle = gridColor;
+                ctx.lineWidth = 1;
+                const startX = offsetX - GRID_SIZE;
+                const startY = offsetY - GRID_SIZE;
+                const cols = Math.ceil(width / GRID_SIZE) + 2;
+                const rows = Math.ceil(height / GRID_SIZE) + 2;
+                for (let i = 0; i <= cols; i++) {
+                    const x = startX + i * GRID_SIZE;
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, height);
+                    ctx.stroke();
+                }
+                for (let i = 0; i <= rows; i++) {
+                    const y = startY + i * GRID_SIZE;
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(width, y);
+                    ctx.stroke();
+                }
+                // 高亮鼠标所在网格
+                if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+                    const gridX = Math.floor((mouseX - offsetX + GRID_SIZE) / GRID_SIZE);
+                    const gridY = Math.floor((mouseY - offsetY + GRID_SIZE) / GRID_SIZE);
+                    const cellLeft = offsetX + gridX * GRID_SIZE;
+                    const cellTop = offsetY + gridY * GRID_SIZE;
+                    ctx.fillStyle = accentColor;
+                    ctx.globalAlpha = 0.35;
+                    ctx.fillRect(cellLeft, cellTop, GRID_SIZE, GRID_SIZE);
+                    ctx.globalAlpha = 1.0;
+                    ctx.beginPath();
+                    ctx.strokeStyle = accentColor;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(cellLeft, cellTop, GRID_SIZE, GRID_SIZE);
+                }
+            }
+            function animate() {
+                if (!ctx) return;
+                updateParticles();
+                drawGrid();
+                requestAnimationFrame(animate);
+            }
+            function onMouseMove(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                mouseX = (e.clientX - rect.left) * scaleX;
+                mouseY = (e.clientY - rect.top) * scaleY;
+            }
+            function resizeCanvas() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                initParticles();
+            }
+            window.gridSystem = { updateTheme: () => {} };
+            function initCanvas() {
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                document.addEventListener('mousemove', onMouseMove);
+                animate();
+            }
+            initCanvas();
+
+            // ========== 鼠标跟随光晕 ==========
             const glow = document.getElementById('cursorGlow');
             if (glow && window.innerWidth > 600) {
                 document.addEventListener('mousemove', (e) => {
                     glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-                    glow.style.opacity = '0.65';
+                    glow.style.opacity = '0.45';
                 });
                 document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
             }
 
+            // ========== 数据加载：全部文章 ==========
             const container = document.getElementById('all-articles');
             const countSpan = document.getElementById('article-count');
 
-            async function loadArticles() {
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+            }
+            function escapeAttr(str) {
+                if (!str) return '';
+                return str.replace(/[&<>"]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[m]));
+            }
+            function renderMarkdownInNewWindow(title, mdHtml) {
+                const win = window.open('', '_blank');
+                win.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head><meta charset="UTF-8"><title>${title} · 赛博阅读</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                    <style>
+                        * { margin:0; padding:0; box-sizing:border-box; }
+                        body { background:#f3f3f3; color:#1b2f51; font-family:'Inter',sans-serif; padding:2rem; }
+                        body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background-image:linear-gradient(#c6c6c6 1px,transparent 1px),linear-gradient(90deg,#c6c6c6 1px,transparent 1px); background-size:80px 80px; opacity:0.3; pointer-events:none; }
+                        .cyber-container { max-width:900px; margin:0 auto; background:rgba(255,240,237,0.92); backdrop-filter:blur(12px); border:1px solid #e8e8e8; border-radius:32px; padding:2.5rem; box-shadow:0 0 40px rgba(0,82,217,0.1); }
+                        h1,h2,h3 { color:#0052d9; border-bottom:1px solid #ffd8d2; padding-bottom:0.5rem; }
+                        p { margin:1.2rem 0; color:#242424; }
+                        code { background:#e3e9ff; color:#f6685d; padding:0.2rem 0.5rem; border-radius:8px; }
+                        pre { background:#fff0ed; padding:1.5rem; border-radius:20px; border:1px solid #ffd8d2; overflow-x:auto; }
+                        .header-glow { text-align:center; margin-bottom:2rem; color:#0052d9; font-family:'Space Mono'; text-transform:uppercase; letter-spacing:4px; }
+                    </style>
+                    </head>
+                    <body><div class="cyber-container"><div class="header-glow"><i class="fas fa-brain"></i> NEURAL INTERFACE <i class="fas fa-microchip"></i></div>${mdHtml}</div></body>
+                    </html>
+                `);
+                win.document.close();
+            }
+
+            async function loadAllArticles() {
                 try {
                     const resp = await fetch('date/articles.json');
                     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -318,7 +523,6 @@
                     }
                     countSpan.textContent = articles.length;
                     container.innerHTML = '';
-
                     for (let idx = 0; idx < articles.length; idx++) {
                         const article = articles[idx];
                         const card = document.createElement('article');
@@ -332,8 +536,7 @@
                         `;
                         container.appendChild(card);
                     }
-
-                    // 绑定阅读事件（带科技新窗）
+                    // 绑定阅读事件
                     document.querySelectorAll('.read-link').forEach(link => {
                         link.addEventListener('click', async (e) => {
                             e.preventDefault();
@@ -345,31 +548,7 @@
                                 if (!mdResp.ok) { alert('读取失败'); return; }
                                 const mdText = await mdResp.text();
                                 const html = marked.parse(mdText);
-                                const win = window.open('', '_blank');
-                                win.document.write(`
-                                    <!DOCTYPE html>
-                                    <html>
-                                    <head><meta charset="UTF-8"><title>${title} · 赛博阅读</title>
-                                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
-                                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-                                    <style>
-                                        * { margin:0; padding:0; box-sizing:border-box; }
-                                        body { background:#0a0c12; color:#e0f0ff; font-family:'Inter',sans-serif; padding:2rem; position:relative; }
-                                        body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background-image:linear-gradient(rgba(0,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,0.02) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; animation: drift 20s linear infinite; }
-                                        @keyframes drift { 0%{background-position:0 0;} 100%{background-position:40px 40px;} }
-                                        .cyber-container { position:relative; z-index:2; max-width:900px; margin:0 auto; background:rgba(10,20,30,0.7); backdrop-filter:blur(12px); border:2px solid rgba(0,255,255,0.3); border-radius:32px; padding:2.5rem; box-shadow:0 0 40px rgba(0,255,255,0.2); animation:fadeScale 0.3s ease; }
-                                        @keyframes fadeScale { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
-                                        h1,h2,h3 { color:#a0f0ff; border-bottom:1px solid #0ff3; padding-bottom:0.5rem; margin:1.5rem 0 1rem; text-shadow:0 0 8px cyan; }
-                                        p { margin:1.2rem 0; color:#cef0ff; }
-                                        code { background:#1a2a3a; color:#ffb0e0; padding:0.2rem 0.5rem; border-radius:8px; font-family:'Space Mono',monospace; border:1px solid #0ff3; }
-                                        pre { background:#0f1a24; padding:1.5rem; border-radius:20px; border:1px solid #0ff; overflow-x:auto; box-shadow:0 0 20px #0ff2; }
-                                        .header-glow { text-align:center; margin-bottom:2rem; font-size:1.2rem; color:#0ff; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:4px; }
-                                    </style>
-                                    </head>
-                                    <body><div class="cyber-container"><div class="header-glow"><i class="fas fa-brain"></i> NEURAL INTERFACE <i class="fas fa-microchip"></i></div>${html}</div></body>
-                                    </html>
-                                `);
-                                win.document.close();
+                                renderMarkdownInNewWindow(title, html);
                             } catch (err) { alert('加载失败: ' + err.message); }
                         });
                     });
@@ -377,22 +556,7 @@
                     container.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle"></i> 神经链接失败: ${err.message}</div>`;
                 }
             }
-
-            function escapeHtml(str) {
-                if (!str) return '';
-                return str.replace(/[&<>]/g, function(m) {
-                    if (m === '&') return '&amp;';
-                    if (m === '<') return '&lt;';
-                    if (m === '>') return '&gt;';
-                    return m;
-                });
-            }
-            function escapeAttr(str) {
-                if (!str) return '';
-                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-            }
-
-            loadArticles();
+            loadAllArticles();
         })();
     </script>
 </body>
