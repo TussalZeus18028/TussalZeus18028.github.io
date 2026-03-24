@@ -303,7 +303,7 @@
     <canvas id="dynamicCanvas"></canvas>
     <div class="cursor-glow" id="cursorGlow"></div>
     <div class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon"></i> <span id="themeLabel">暗色模式</span>
+        <span id="themeLabel"></span>
     </div>
     <div class="wrapper">
         <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回主站</a>
@@ -486,7 +486,30 @@
                 if (!str) return '';
                 return str.replace(/[&<>"]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[m]));
             }
+
+            // 修复：弹窗跟随主站主题（读取 localStorage 中的主题）
             function renderMarkdownInNewWindow(title, mdHtml) {
+                const theme = localStorage.getItem('theme') || 'dark';
+                const isLight = theme === 'light';
+                const pageStyle = isLight ? `
+                    body { background: #f3f3f3; color: #1b2f51; }
+                    .cyber-container { background: rgba(255, 240, 237, 0.96); border: 1px solid #e8e8e8; box-shadow: 0 0 40px rgba(0,82,217,0.1); }
+                    h1, h2, h3 { color: #0052d9; border-bottom-color: #ffd8d2; }
+                    p { color: #242424; }
+                    code { background: #e3e9ff; color: #f6685d; }
+                    pre { background: #fff0ed; border-color: #ffd8d2; }
+                    .header-glow { color: #0052d9; }
+                    a { color: #0052d9; }
+                ` : `
+                    body { background: #000; color: #eee; }
+                    .cyber-container { background: rgba(17,17,17,0.92); border: 1px solid rgba(51,51,51,0.8); box-shadow: 0 0 40px rgba(255,163,0,0.2); }
+                    h1, h2, h3 { color: #ffa300; border-bottom-color: #ff9285; }
+                    p { color: #ccc; }
+                    code { background: #1e1e2e; color: #ff9285; }
+                    pre { background: #111; border-color: #ffa300; }
+                    .header-glow { color: #ffa300; }
+                    a { color: #ffa300; }
+                `;
                 const win = window.open('', '_blank');
                 win.document.write(`
                     <!DOCTYPE html>
@@ -496,14 +519,34 @@
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
                     <style>
                         * { margin:0; padding:0; box-sizing:border-box; }
-                        body { background:#f3f3f3; color:#1b2f51; font-family:'Inter',sans-serif; padding:2rem; }
-                        body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background-image:linear-gradient(#c6c6c6 1px,transparent 1px),linear-gradient(90deg,#c6c6c6 1px,transparent 1px); background-size:80px 80px; opacity:0.3; pointer-events:none; }
-                        .cyber-container { max-width:900px; margin:0 auto; background:rgba(255,240,237,0.92); backdrop-filter:blur(12px); border:1px solid #e8e8e8; border-radius:32px; padding:2.5rem; box-shadow:0 0 40px rgba(0,82,217,0.1); }
-                        h1,h2,h3 { color:#0052d9; border-bottom:1px solid #ffd8d2; padding-bottom:0.5rem; }
-                        p { margin:1.2rem 0; color:#242424; }
-                        code { background:#e3e9ff; color:#f6685d; padding:0.2rem 0.5rem; border-radius:8px; }
-                        pre { background:#fff0ed; padding:1.5rem; border-radius:20px; border:1px solid #ffd8d2; overflow-x:auto; }
-                        .header-glow { text-align:center; margin-bottom:2rem; color:#0052d9; font-family:'Space Mono'; text-transform:uppercase; letter-spacing:4px; }
+                        body { font-family:'Inter',sans-serif; padding:2rem; transition: background 0.2s, color 0.2s; }
+                        body::before {
+                            content:""; position:fixed; top:0; left:0; width:100%; height:100%;
+                            background-image: linear-gradient(${isLight ? '#c6c6c6' : '#333'} 1px, transparent 1px), linear-gradient(90deg, ${isLight ? '#c6c6c6' : '#333'} 1px, transparent 1px);
+                            background-size: 80px 80px;
+                            opacity:0.2;
+                            pointer-events:none;
+                            z-index:0;
+                        }
+                        .cyber-container {
+                            max-width: 900px;
+                            margin: 0 auto;
+                            backdrop-filter: blur(8px);
+                            border-radius: 32px;
+                            padding: 2.5rem;
+                            position: relative;
+                            z-index:2;
+                            transition: all 0.2s;
+                        }
+                        ${pageStyle}
+                        .cyber-container h1, .cyber-container h2, .cyber-container h3 { margin-top: 1.5rem; margin-bottom: 1rem; }
+                        .cyber-container p { margin:1.2rem 0; line-height:1.7; }
+                        .cyber-container code { padding:0.2rem 0.5rem; border-radius:8px; font-family:'Space Mono',monospace; }
+                        .cyber-container pre { padding:1.5rem; border-radius:20px; overflow-x:auto; margin:1.5rem 0; }
+                        .cyber-container img { max-width:100%; border-radius:16px; }
+                        .header-glow { text-align:center; margin-bottom:2rem; font-family:'Space Mono'; text-transform:uppercase; letter-spacing:4px; font-weight:600; }
+                        .header-glow i { margin:0 8px; }
+                        blockquote { border-left: 4px solid var(--accent); padding-left: 1.2rem; opacity:0.85; font-style:italic; margin:1rem 0; }
                     </style>
                     </head>
                     <body><div class="cyber-container"><div class="header-glow"><i class="fas fa-brain"></i> NEURAL INTERFACE <i class="fas fa-microchip"></i></div>${mdHtml}</div></body>
