@@ -42,6 +42,13 @@
         "icon": "fa-cubes"
     },
     {
+        "filename": "Window is White.exe",
+        "name": "连线游戏",
+        "size": "23 KiB",
+        "description": "很小但很难的连线游戏",
+        "icon": "fa-cubes"
+    },
+    {
         "filename": "HiBitUninstaller-Portable.exe",
         "name": "HiBitUninstaller - 便携版",
         "size": "14.6 MiB",
