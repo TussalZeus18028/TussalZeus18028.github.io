@@ -23,7 +23,7 @@
     {
         "filename": "AltSendme_0.3.4_x64-setup.exe",
         "name": "AltSendme",
-        "size": "7.75 MiB",
+        "size": "7.8 MiB",
         "description": "文件传输",
         "icon": "fa-cubes"
     },
@@ -68,5 +68,12 @@
         "size": "3.18 MB",
         "description": "一个AI学习爱的故事",
         "icon": "fa-heart"
+    },
+    {
+        "filename": "PCL2-CE.exe",
+        "name": "PCL2-CE",
+        "size": "19.5 MiB",
+        "description": "PCL2-CE启动器",
+        "icon": "fa-cubes"
     }
 ]

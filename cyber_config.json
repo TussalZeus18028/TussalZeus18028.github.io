@@ -1,0 +1,16 @@
+{
+    "theme": "dark",
+    "auto_scroll": true,
+    "window_width": 1600,
+    "window_height": 853,
+    "custom_colors": {
+        "background": "#2b2b2b",
+        "text": "#ffffff",
+        "accent": "#4CAF50",
+        "border": "#555555",
+        "group_bg": "#363636",
+        "input_bg": "#404040",
+        "button_bg": "#4CAF50",
+        "button_hover": "#45a049"
+    }
+}
