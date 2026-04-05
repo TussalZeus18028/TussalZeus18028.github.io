@@ -21,6 +21,13 @@
         "icon": "fas fa-tag"
     },
     {
+        "filename": "AltSendme_0.3.4_x64-setup.exe",
+        "name": "AltSendme",
+        "size": "7.75 MiB",
+        "description": "文件传输,更新见https://altsendme.com",
+        "icon": "fa-cubes"
+    },
+    {
         "filename": "LifeGame.zip",
         "name": "生命游戏",
         "size": "17.7 KiB",
