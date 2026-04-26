@@ -3,8 +3,6 @@ import os
 import json
 import shutil
 import re
-import subprocess
-import threading
 from datetime import datetime
 
 from PyQt5.QtWidgets import (
@@ -12,16 +10,25 @@ from PyQt5.QtWidgets import (
     QTabWidget, QListWidget, QListWidgetItem, QTextEdit, QLineEdit, QPushButton,
     QLabel, QMessageBox, QFileDialog, QTableWidget, QTableWidgetItem, QHeaderView,
     QDialog, QFormLayout, QSplitter, QGroupBox, QSpinBox, QCheckBox, QComboBox,
-    QColorDialog, QScrollArea, QTextBrowser
+    QColorDialog, QScrollArea, QTextBrowser, QMenu, QAction, QToolButton, QProgressBar
 )
-from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal, QThread
-from PyQt5.QtGui import QFont, QColor, QIcon
+from PyQt5.QtCore import Qt, QSize, QTimer
+from PyQt5.QtGui import QFont, QColor, QIcon, QDesktopServices
+from PyQt5.QtCore import QUrl
 
 try:
     import markdown
     MARKDOWN_AVAILABLE = True
 except ImportError:
     MARKDOWN_AVAILABLE = False
+
+try:
+    from pygments import highlight
+    from pygments.lexers import get_lexer_by_name
+    from pygments.formatters import HtmlFormatter
+    PYGMENTS_AVAILABLE = True
+except ImportError:
+    PYGMENTS_AVAILABLE = False
 
 # ---------- 配置 ----------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -57,6 +64,22 @@ def format_file_size(size_bytes: int) -> str:
     return f"{size_bytes:.1f} GiB"
 
 
+def get_file_icon(filename: str) -> QIcon:
+    """根据扩展名返回一个简单的图标（使用QStyle标准图标）"""
+    ext = os.path.splitext(filename)[1].lower()
+    style = QApplication.style()
+    if ext in ['.pdf']:
+        return style.standardIcon(style.SP_FileIcon)
+    elif ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
+        return style.standardIcon(style.SP_FileDialogContentsView)
+    elif ext in ['.zip', '.rar', '.7z', '.tar', '.gz']:
+        return style.standardIcon(style.SP_DirIcon)  # 近似
+    elif ext in ['.exe', '.msi']:
+        return style.standardIcon(style.SP_ComputerIcon)
+    else:
+        return style.standardIcon(style.SP_FileIcon)
+
+
 # ---------- 主题管理器 ----------
 class ThemeManager:
     def __init__(self):
@@ -67,6 +90,7 @@ class ThemeManager:
         }
 
     def get_dark_theme(self):
+        # 暗色主题中，表头文字改为白色/浅灰色，去除橙黄色强调，但保留accent用于其他组件
         return """
             QMainWindow, QWidget {
                 background-color: #2b2b2b;
@@ -84,16 +108,16 @@ class ThemeManager:
                 subcontrol-origin: margin;
                 left: 10px;
                 padding: 0 8px;
-                color: #4CAF50;
+                color: #ffa300;
             }
             QPushButton {
                 background-color: #4CAF50;
                 border: none;
                 color: white;
-                padding: 6px 12px;
+                padding: 5px 10px;
                 border-radius: 4px;
                 font-weight: bold;
-                min-width: 70px;
+                min-width: 60px;
             }
             QPushButton:hover {
                 background-color: #45a049;
@@ -109,7 +133,7 @@ class ThemeManager:
                 background-color: #da190b;
             }
             QLineEdit, QComboBox, QTextEdit, QListWidget, QTableWidget {
-                padding: 8px;
+                padding: 6px;
                 border: 2px solid #555;
                 border-radius: 4px;
                 background-color: #404040;
@@ -120,16 +144,16 @@ class ThemeManager:
                 border-color: #4CAF50;
             }
             QTableWidget::item {
-                padding: 6px;
+                padding: 4px;
             }
             QTableWidget QPushButton {
                 background-color: #4CAF50;
                 border: none;
                 color: white;
-                padding: 4px 8px;
+                padding: 3px 6px;
                 border-radius: 4px;
                 font-weight: bold;
-                min-width: 60px;
+                min-width: 50px;
             }
             QTableWidget QPushButton:hover {
                 background-color: #45a049;
@@ -170,7 +194,7 @@ class ThemeManager:
             QTabBar::tab {
                 background-color: #404040;
                 color: white;
-                padding: 8px 16px;
+                padding: 6px 12px;
                 margin-right: 2px;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
@@ -183,11 +207,11 @@ class ThemeManager:
                 background-color: #555;
             }
             QHeaderView::section {
-                background-color: #2d4a2d;
+                background-color: #2b2b2b;
                 padding: 6px;
                 border: none;
                 font-weight: bold;
-                color: #4CAF50;
+                color: #e0e0e0;  /* 表头文字改为浅灰，适配暗色主题 */
             }
             QScrollBar:vertical {
                 background-color: #2b2b2b;
@@ -205,6 +229,7 @@ class ThemeManager:
         """
 
     def get_light_theme(self):
+        # 亮色主题表头文字使用深灰色，不使用橙黄
         return """
             QMainWindow, QWidget {
                 background-color: #f5f5f5;
@@ -228,10 +253,10 @@ class ThemeManager:
                 background-color: #4CAF50;
                 border: none;
                 color: white;
-                padding: 6px 12px;
+                padding: 5px 10px;
                 border-radius: 4px;
                 font-weight: bold;
-                min-width: 70px;
+                min-width: 60px;
             }
             QPushButton:hover {
                 background-color: #45a049;
@@ -247,7 +272,7 @@ class ThemeManager:
                 background-color: #da190b;
             }
             QLineEdit, QComboBox, QTextEdit, QListWidget, QTableWidget {
-                padding: 8px;
+                padding: 6px;
                 border: 2px solid #cccccc;
                 border-radius: 4px;
                 background-color: #ffffff;
@@ -258,16 +283,16 @@ class ThemeManager:
                 border-color: #4CAF50;
             }
             QTableWidget::item {
-                padding: 6px;
+                padding: 4px;
             }
             QTableWidget QPushButton {
                 background-color: #4CAF50;
                 border: none;
                 color: white;
-                padding: 4px 8px;
+                padding: 3px 6px;
                 border-radius: 4px;
                 font-weight: bold;
-                min-width: 60px;
+                min-width: 50px;
             }
             QTableWidget QPushButton:hover {
                 background-color: #45a049;
@@ -309,7 +334,7 @@ class ThemeManager:
             QTabBar::tab {
                 background-color: #f0f0f0;
                 color: #333333;
-                padding: 8px 16px;
+                padding: 6px 12px;
                 margin-right: 2px;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
@@ -326,7 +351,7 @@ class ThemeManager:
                 padding: 6px;
                 border: none;
                 font-weight: bold;
-                color: #2e7d32;
+                color: #2c3e50;  /* 深灰色表头 */
             }
             QScrollBar:vertical {
                 background-color: #f5f5f5;
@@ -352,6 +377,7 @@ class ThemeManager:
         input_bg = colors.get("input_bg", "#404040")
         button_bg = colors.get("button_bg", "#4CAF50")
         button_hover = colors.get("button_hover", "#45a049")
+        # 表头文字跟随主体文字颜色
         return f"""
             QMainWindow, QWidget {{
                 background-color: {bg};
@@ -375,10 +401,10 @@ class ThemeManager:
                 background-color: {button_bg};
                 border: none;
                 color: white;
-                padding: 6px 12px;
+                padding: 5px 10px;
                 border-radius: 4px;
                 font-weight: bold;
-                min-width: 70px;
+                min-width: 60px;
             }}
             QPushButton:hover {{
                 background-color: {button_hover};
@@ -394,7 +420,7 @@ class ThemeManager:
                 background-color: #da190b;
             }}
             QLineEdit, QComboBox, QTextEdit, QListWidget, QTableWidget {{
-                padding: 8px;
+                padding: 6px;
                 border: 2px solid {border};
                 border-radius: 4px;
                 background-color: {input_bg};
@@ -405,16 +431,16 @@ class ThemeManager:
                 border-color: {accent};
             }}
             QTableWidget::item {{
-                padding: 6px;
+                padding: 4px;
             }}
             QTableWidget QPushButton {{
                 background-color: {button_bg};
                 border: none;
                 color: white;
-                padding: 4px 8px;
+                padding: 3px 6px;
                 border-radius: 4px;
                 font-weight: bold;
-                min-width: 60px;
+                min-width: 50px;
             }}
             QTableWidget QPushButton:hover {{
                 background-color: {button_hover};
@@ -455,7 +481,7 @@ class ThemeManager:
             QTabBar::tab {{
                 background-color: {input_bg};
                 color: {text};
-                padding: 8px 16px;
+                padding: 6px 12px;
                 margin-right: 2px;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
@@ -472,7 +498,7 @@ class ThemeManager:
                 padding: 6px;
                 border: none;
                 font-weight: bold;
-                color: {accent};
+                color: {text};
             }}
             QScrollBar:vertical {{
                 background-color: {bg};
@@ -496,80 +522,127 @@ class ThemeManager:
         return self.themes.get(name, self.themes["dark"])
 
 
-# ---------- 文章管理组件 ----------
+# ---------- 增强版文章管理组件 ----------
 class ArticleManager(QWidget):
     def __init__(self):
         super().__init__()
         self.articles = []
         self.current_filename = None
+        self.filtered_articles = []
         self.init_ui()
         self.load_articles()
+        self.update_timer = QTimer()
+        self.update_timer.setSingleShot(True)
+        self.update_timer.timeout.connect(self.preview_markdown)
+        self.real_time_preview = False  # 实时预览开关
 
     def init_ui(self):
-        layout = QHBoxLayout(self)
+        main_layout = QHBoxLayout(self)
+        main_layout.setContentsMargins(4, 4, 4, 4)
+        main_layout.setSpacing(6)
+
+        # 左侧面板 (紧凑)
         left = QWidget()
         left_layout = QVBoxLayout(left)
+        left_layout.setContentsMargins(2, 2, 2, 2)
+        left_layout.setSpacing(4)
+        
+        # 搜索和过滤区域
+        filter_layout = QHBoxLayout()
+        self.search_edit = QLineEdit()
+        self.search_edit.setPlaceholderText("🔍 搜索标题/摘要...")
+        self.search_edit.textChanged.connect(self.filter_articles)
+        self.tag_filter = QLineEdit()
+        self.tag_filter.setPlaceholderText("🏷️ 过滤标签 (逗号分隔)")
+        self.tag_filter.textChanged.connect(self.filter_articles)
+        filter_layout.addWidget(self.search_edit)
+        filter_layout.addWidget(self.tag_filter)
+        left_layout.addLayout(filter_layout)
+        
         self.article_list = QListWidget()
-        self.article_list.setMaximumWidth(280)
+        self.article_list.setMaximumWidth(260)
         self.article_list.itemClicked.connect(self.on_article_selected)
-        btn_new = QPushButton("➕ 新建文章")
-        btn_new.clicked.connect(self.new_article)
         left_layout.addWidget(QLabel("📄 文章列表"))
         left_layout.addWidget(self.article_list)
+        
+        btn_new = QPushButton("➕ 新建文章")
+        btn_new.clicked.connect(self.new_article)
         left_layout.addWidget(btn_new)
 
+        # 右侧面板 (紧凑)
         right = QWidget()
         right_layout = QVBoxLayout(right)
+        right_layout.setContentsMargins(2, 2, 2, 2)
+        right_layout.setSpacing(4)
+        
         form = QWidget()
         form_layout = QFormLayout(form)
+        form_layout.setSpacing(4)
         self.title_edit = QLineEdit()
         self.date_edit = QLineEdit(datetime.now().strftime("%Y.%m.%d"))
         self.category_edit = QLineEdit("TECH")
+        self.tags_edit = QLineEdit()  # 新增标签字段
+        self.tags_edit.setPlaceholderText("用逗号分隔, 例如: python, tutorial")
         self.excerpt_edit = QTextEdit()
-        self.excerpt_edit.setMaximumHeight(80)
+        self.excerpt_edit.setMaximumHeight(60)
         form_layout.addRow("标题:", self.title_edit)
         form_layout.addRow("日期:", self.date_edit)
         form_layout.addRow("分类:", self.category_edit)
+        form_layout.addRow("标签:", self.tags_edit)
         form_layout.addRow("摘要:", self.excerpt_edit)
 
+        # Markdown 编辑区与预览区 (分割)
         self.md_edit = QTextEdit()
         self.md_edit.setPlaceholderText("Markdown 内容...")
+        self.md_edit.textChanged.connect(self.on_text_changed)
         self.preview = QTextBrowser() if MARKDOWN_AVAILABLE else None
         if self.preview:
             self.preview.setOpenExternalLinks(True)
 
+        # 工具栏
         btn_bar = QHBoxLayout()
         btn_save = QPushButton("💾 保存")
         btn_save.clicked.connect(self.save_article)
         btn_delete = QPushButton("🗑️ 删除")
         btn_delete.clicked.connect(self.delete_article)
         btn_preview = QPushButton("👁️ 预览")
-        if self.preview:
+        if btn_preview and self.preview:
             btn_preview.clicked.connect(self.preview_markdown)
-        else:
-            btn_preview.clicked.connect(
-                lambda: QMessageBox.warning(self, "缺少依赖", "请先安装 markdown 库：\npip install markdown")
-            )
+        self.real_time_cb = QCheckBox("实时预览")
+        self.real_time_cb.toggled.connect(self.toggle_realtime_preview)
+        btn_export_html = QPushButton("📄 导出HTML")
+        btn_export_html.clicked.connect(self.export_as_html)
+        
         btn_bar.addWidget(btn_save)
         btn_bar.addWidget(btn_delete)
-        btn_bar.addWidget(btn_preview)
+        if btn_preview:
+            btn_bar.addWidget(btn_preview)
+        btn_bar.addWidget(self.real_time_cb)
+        btn_bar.addWidget(btn_export_html)
         btn_bar.addStretch()
 
         right_layout.addWidget(form)
         right_layout.addWidget(QLabel("📝 Markdown 内容:"))
-        # 编辑器 + 预览区用 splitter 分割（md_edit 只放一次）
         if self.preview:
             splitter = QSplitter(Qt.Vertical)
             splitter.addWidget(self.md_edit)
             splitter.addWidget(self.preview)
-            splitter.setSizes([300, 200])
             right_layout.addWidget(splitter)
         else:
             right_layout.addWidget(self.md_edit)
         right_layout.addLayout(btn_bar)
 
-        layout.addWidget(left, 1)
-        layout.addWidget(right, 3)
+        main_layout.addWidget(left, 1)
+        main_layout.addWidget(right, 3)
+
+    def on_text_changed(self):
+        if self.real_time_preview and MARKDOWN_AVAILABLE:
+            self.update_timer.start(500)
+
+    def toggle_realtime_preview(self, checked):
+        self.real_time_preview = checked
+        if checked:
+            self.preview_markdown()
 
     def load_articles(self):
         try:
@@ -577,17 +650,45 @@ class ArticleManager(QWidget):
                 self.articles = json.load(f)
         except:
             self.articles = []
+        # 确保每个文章有 tags 字段
+        for art in self.articles:
+            if "tags" not in art:
+                art["tags"] = ""
+        self.filter_articles()
+
+    def filter_articles(self):
+        search_text = self.search_edit.text().strip().lower()
+        tag_text = self.tag_filter.text().strip().lower()
+        if not search_text and not tag_text:
+            self.filtered_articles = self.articles.copy()
+        else:
+            self.filtered_articles = []
+            for art in self.articles:
+                title_match = search_text in art.get("title", "").lower()
+                excerpt_match = search_text in art.get("excerpt", "").lower()
+                tag_match = True
+                if tag_text:
+                    art_tags = art.get("tags", "").lower()
+                    tags_list = [t.strip() for t in tag_text.split(',') if t.strip()]
+                    tag_match = any(tag in art_tags for tag in tags_list)
+                if (title_match or excerpt_match) and tag_match:
+                    self.filtered_articles.append(art)
         self.refresh_list()
 
     def refresh_list(self):
         self.article_list.clear()
-        for art in self.articles:
-            item = QListWidgetItem(f"{art.get('title','')}  [{art.get('date','')}]")
+        for art in self.filtered_articles:
+            display = f"{art.get('title','')}  [{art.get('date','')}]"
+            if art.get("tags"):
+                display += f"  🏷️{art.get('tags')[:20]}"
+            item = QListWidgetItem(display)
             item.setData(Qt.UserRole, art.get("filename"))
             self.article_list.addItem(item)
-        if self.articles:
+        if self.filtered_articles:
             self.article_list.setCurrentRow(0)
             self.on_article_selected(self.article_list.item(0))
+        else:
+            self.current_filename = None
 
     def on_article_selected(self, item):
         filename = item.data(Qt.UserRole)
@@ -598,6 +699,7 @@ class ArticleManager(QWidget):
         self.title_edit.setText(article.get("title", ""))
         self.date_edit.setText(article.get("date", ""))
         self.category_edit.setText(article.get("category", ""))
+        self.tags_edit.setText(article.get("tags", ""))
         self.excerpt_edit.setPlainText(article.get("excerpt", ""))
         md_path = os.path.join(DATE_DIR, filename)
         if os.path.exists(md_path):
@@ -605,12 +707,15 @@ class ArticleManager(QWidget):
                 self.md_edit.setPlainText(f.read())
         else:
             self.md_edit.clear()
+        if self.real_time_preview:
+            self.preview_markdown()
 
     def new_article(self):
         self.current_filename = None
         self.title_edit.clear()
         self.date_edit.setText(datetime.now().strftime("%Y.%m.%d"))
         self.category_edit.setText("TECH")
+        self.tags_edit.clear()
         self.excerpt_edit.clear()
         self.md_edit.clear()
         self.article_list.clearSelection()
@@ -622,6 +727,7 @@ class ArticleManager(QWidget):
             return
         date = self.date_edit.text().strip()
         category = self.category_edit.text().strip()
+        tags = self.tags_edit.text().strip()
         excerpt = self.excerpt_edit.toPlainText().strip()
         content = self.md_edit.toPlainText()
 
@@ -642,13 +748,13 @@ class ArticleManager(QWidget):
         if self.current_filename:
             for art in self.articles:
                 if art.get("filename") == self.current_filename:
-                    art.update({"title": title, "date": date, "category": category, "excerpt": excerpt})
+                    art.update({"title": title, "date": date, "category": category, "tags": tags, "excerpt": excerpt})
                     if filename != self.current_filename:
                         shutil.move(md_path, os.path.join(DATE_DIR, filename))
                         art["filename"] = filename
                     break
         else:
-            self.articles.append({"filename": filename, "title": title, "date": date, "category": category, "excerpt": excerpt})
+            self.articles.append({"filename": filename, "title": title, "date": date, "category": category, "tags": tags, "excerpt": excerpt})
             self.current_filename = filename
 
         with open(ARTICLES_JSON, "w", encoding="utf-8") as f:
@@ -671,6 +777,63 @@ class ArticleManager(QWidget):
         self.load_articles()
         self.new_article()
 
+    def export_as_html(self):
+        if not self.current_filename:
+            QMessageBox.warning(self, "警告", "没有选中的文章")
+            return
+        md_text = self.md_edit.toPlainText()
+        if not MARKDOWN_AVAILABLE:
+            QMessageBox.critical(self, "错误", "未安装markdown库")
+            return
+        try:
+            html_body = markdown.markdown(md_text, extensions=['extra', 'codehilite'] if PYGMENTS_AVAILABLE else ['extra'])
+            style = self._get_preview_style()
+            full_html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><title>{self.title_edit.text()}</title>{style}</head><body>{html_body}</body></html>"""
+            save_path, _ = QFileDialog.getSaveFileName(self, "导出HTML", f"{self.title_edit.text()}.html", "HTML Files (*.html)")
+            if save_path:
+                with open(save_path, "w", encoding="utf-8") as f:
+                    f.write(full_html)
+                QMessageBox.information(self, "成功", f"导出至 {save_path}")
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"导出失败: {e}")
+
+    def _get_preview_style(self):
+        # 获取当前主题样式用于预览 (与暗色/亮色匹配)
+        if hasattr(self.window(), 'config'):
+            theme = self.window().config.get("theme", "dark")
+            if theme == "dark":
+                bg = "#0a0e1a"
+                text = "#ccc"
+                code_bg = "#1e1e2e"
+                pre_bg = "#111"
+                heading = "#ffa300"
+            else:
+                bg = "#ffffff"
+                text = "#333"
+                code_bg = "#f5f5f5"
+                pre_bg = "#f0f0f0"
+                heading = "#2e7d32"
+        else:
+            bg = "#0a0e1a"
+            text = "#ccc"
+            code_bg = "#1e1e2e"
+            pre_bg = "#111"
+            heading = "#ffa300"
+        style = f"""
+        <style>
+            body {{ font-family: 'Segoe UI', 'Microsoft YaHei', monospace; background: {bg}; color: {text}; padding: 20px; line-height: 1.6; }}
+            h1, h2, h3, h4 {{ color: {heading}; margin-top: 1.2em; }}
+            code {{ background: {code_bg}; padding: 2px 6px; border-radius: 6px; font-size: 0.9em; }}
+            pre {{ background: {pre_bg}; padding: 12px; border-radius: 12px; overflow-x: auto; }}
+            a {{ color: #ff9285; }}
+            blockquote {{ border-left: 4px solid {heading}; margin: 1em 0; padding-left: 1em; opacity: 0.8; }}
+            img {{ max-width: 100%; }}
+        </style>
+        """
+        if PYGMENTS_AVAILABLE:
+            style += HtmlFormatter().get_style_defs('.codehilite')
+        return style
+
     def preview_markdown(self):
         if not self.preview:
             return
@@ -679,22 +842,17 @@ class ArticleManager(QWidget):
             self.preview.setPlainText("请安装 markdown 库: pip install markdown")
             return
         try:
-            html = markdown.markdown(md_text, extensions=['extra', 'codehilite'])
-            style = """
-            <style>
-                body { font-family: 'Segoe UI', monospace; background: #0d1a0d; color: #ccc; padding: 20px; }
-                h1,h2,h3 { color: #4CAF50; }
-                code { background: #1a2e1a; padding: 2px 6px; border-radius: 6px; color: #81c784; }
-                pre { background: #111; padding: 12px; border-radius: 12px; border: 1px solid #2e4a2e; }
-                a { color: #66bb6a; }
-            </style>
-            """
+            if PYGMENTS_AVAILABLE:
+                html = markdown.markdown(md_text, extensions=['extra', 'codehilite'])
+            else:
+                html = markdown.markdown(md_text, extensions=['extra'])
+            style = self._get_preview_style()
             self.preview.setHtml(style + html)
         except Exception as e:
             self.preview.setPlainText(f"预览错误: {e}")
 
 
-# ---------- 下载管理组件 ----------
+# ---------- 增强版下载管理组件 ----------
 class DownloadManager(QWidget):
     def __init__(self):
         super().__init__()
@@ -704,24 +862,30 @@ class DownloadManager(QWidget):
 
     def init_ui(self):
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(4)
+        
         toolbar = QHBoxLayout()
         btn_add = QPushButton("➕ 添加")
         btn_add.clicked.connect(self.add_item)
         btn_refresh = QPushButton("🔄 刷新")
         btn_refresh.clicked.connect(self.load_downloads)
+        btn_open_folder = QPushButton("📂 打开Files目录")
+        btn_open_folder.clicked.connect(lambda: QDesktopServices.openUrl(QUrl.fromLocalFile(FILES_DIR)))
         toolbar.addWidget(btn_add)
         toolbar.addWidget(btn_refresh)
+        toolbar.addWidget(btn_open_folder)
         toolbar.addStretch()
         layout.addLayout(toolbar)
 
         self.table = QTableWidget()
-        self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(["显示名称", "文件名", "大小", "描述", "图标", "操作"])
+        self.table.setColumnCount(7)
+        self.table.setHorizontalHeaderLabels(["图标", "显示名称", "文件名", "大小", "描述", "操作", "文件操作"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
-        # 设置行高以适应按钮
-        self.table.verticalHeader().setDefaultSectionSize(40)
+        self.table.setSortingEnabled(True)
+        self.table.verticalHeader().setDefaultSectionSize(32)  # 紧凑行高
         layout.addWidget(self.table)
 
     def load_downloads(self):
@@ -735,25 +899,63 @@ class DownloadManager(QWidget):
     def refresh_table(self):
         self.table.setRowCount(len(self.downloads))
         for row, item in enumerate(self.downloads):
-            self.table.setItem(row, 0, QTableWidgetItem(item.get("name", "")))
-            self.table.setItem(row, 1, QTableWidgetItem(item.get("filename", "")))
-            self.table.setItem(row, 2, QTableWidgetItem(item.get("size", "")))
-            self.table.setItem(row, 3, QTableWidgetItem(item.get("description", "")))
-            self.table.setItem(row, 4, QTableWidgetItem(item.get("icon", "")))
-            # 操作按钮容器
+            # 图标
+            icon = get_file_icon(item.get("filename", ""))
+            icon_item = QTableWidgetItem()
+            icon_item.setIcon(icon)
+            icon_item.setText("")
+            self.table.setItem(row, 0, icon_item)
+            self.table.setItem(row, 1, QTableWidgetItem(item.get("name", "")))
+            self.table.setItem(row, 2, QTableWidgetItem(item.get("filename", "")))
+            self.table.setItem(row, 3, QTableWidgetItem(item.get("size", "")))
+            self.table.setItem(row, 4, QTableWidgetItem(item.get("description", "")))
+            
+            # 操作按钮 (编辑/删除)
             btn_widget = QWidget()
             btn_layout = QHBoxLayout(btn_widget)
-            btn_layout.setContentsMargins(4, 4, 4, 4)
+            btn_layout.setContentsMargins(2, 2, 2, 2)
             btn_edit = QPushButton("编辑")
-            btn_edit.setFixedSize(60, 28)
+            btn_edit.setFixedSize(50, 24)
             btn_edit.clicked.connect(lambda _, r=row: self.edit_item(r))
             btn_delete = QPushButton("删除")
-            btn_delete.setFixedSize(60, 28)
+            btn_delete.setFixedSize(50, 24)
             btn_delete.clicked.connect(lambda _, r=row: self.delete_item(r))
             btn_layout.addWidget(btn_edit)
             btn_layout.addWidget(btn_delete)
             btn_layout.addStretch()
             self.table.setCellWidget(row, 5, btn_widget)
+            
+            # 文件操作按钮 (打开/打开所在文件夹)
+            file_btn_widget = QWidget()
+            file_layout = QHBoxLayout(file_btn_widget)
+            file_layout.setContentsMargins(2, 2, 2, 2)
+            btn_open = QPushButton("打开")
+            btn_open.setFixedSize(50, 24)
+            btn_open.clicked.connect(lambda _, r=row: self.open_file(r))
+            btn_open_dir = QPushButton("定位")
+            btn_open_dir.setFixedSize(50, 24)
+            btn_open_dir.clicked.connect(lambda _, r=row: self.open_file_location(r))
+            file_layout.addWidget(btn_open)
+            file_layout.addWidget(btn_open_dir)
+            file_layout.addStretch()
+            self.table.setCellWidget(row, 6, file_btn_widget)
+
+    def open_file(self, row):
+        item = self.downloads[row]
+        file_path = os.path.join(FILES_DIR, item.get("filename"))
+        if os.path.exists(file_path):
+            QDesktopServices.openUrl(QUrl.fromLocalFile(file_path))
+        else:
+            QMessageBox.warning(self, "错误", f"文件不存在: {item.get('filename')}")
+
+    def open_file_location(self, row):
+        item = self.downloads[row]
+        file_path = os.path.join(FILES_DIR, item.get("filename"))
+        if os.path.exists(file_path):
+            dir_path = os.path.dirname(file_path)
+            QDesktopServices.openUrl(QUrl.fromLocalFile(dir_path))
+        else:
+            QMessageBox.warning(self, "错误", "文件目录不存在")
 
     def add_item(self):
         dialog = DownloadItemDialog(self)
@@ -810,12 +1012,13 @@ class DownloadItemDialog(QDialog):
 
     def init_ui(self):
         layout = QFormLayout(self)
+        layout.setSpacing(6)
         self.name_edit = QLineEdit()
         self.filename_edit = QLineEdit()
         self.filename_edit.setReadOnly(True)
         self.size_edit = QLineEdit()
         self.desc_edit = QTextEdit()
-        self.desc_edit.setMaximumHeight(80)
+        self.desc_edit.setMaximumHeight(60)
         self.icon_edit = QLineEdit()
         btn_file = QPushButton("选择文件 (复制到Files)")
         btn_file.clicked.connect(self.select_file)
@@ -887,8 +1090,9 @@ class SettingsWidget(QWidget):
 
     def init_ui(self):
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(6, 6, 6, 6)
+        layout.setSpacing(6)
 
-        # 主题选择
         theme_group = QGroupBox("主题设置")
         theme_layout = QFormLayout(theme_group)
         self.theme_combo = QComboBox()
@@ -896,7 +1100,6 @@ class SettingsWidget(QWidget):
         self.theme_combo.currentTextChanged.connect(self.parent_window.on_theme_changed)
         theme_layout.addRow("主题:", self.theme_combo)
 
-        # 自定义颜色组
         self.custom_group = QGroupBox("自定义颜色")
         custom_layout = QGridLayout(self.custom_group)
         self.color_buttons = {}
@@ -912,7 +1115,7 @@ class SettingsWidget(QWidget):
         ]
         for i, (key, label) in enumerate(colors_def):
             btn = QPushButton()
-            btn.setFixedSize(60, 30)
+            btn.setFixedSize(50, 25)
             btn.clicked.connect(lambda _, k=key: self.parent_window.choose_custom_color(k))
             self.color_buttons[key] = btn
             custom_layout.addWidget(QLabel(label), i, 0)
@@ -923,7 +1126,6 @@ class SettingsWidget(QWidget):
 
         theme_layout.addRow(self.custom_group)
 
-        # 其他设置
         other_group = QGroupBox("其他设置")
         other_layout = QVBoxLayout(other_group)
         self.auto_scroll_cb = QCheckBox("自动滚动输出到底部")
@@ -941,12 +1143,10 @@ class SettingsWidget(QWidget):
     def load_config(self, config):
         self.theme_combo.setCurrentText(config.get("theme", "dark"))
         self.auto_scroll_cb.setChecked(config.get("auto_scroll", True))
-        # 更新颜色按钮显示
         custom_colors = config.get("custom_colors", {})
         for key, btn in self.color_buttons.items():
             color = custom_colors.get(key, "#2b2b2b")
             btn.setStyleSheet(f"background-color: {color}; border: 1px solid #888;")
-        # 显示/隐藏自定义组
         self.custom_group.setVisible(config.get("theme") == "custom")
 
     def get_config(self):
@@ -954,157 +1154,6 @@ class SettingsWidget(QWidget):
             "theme": self.theme_combo.currentText(),
             "auto_scroll": self.auto_scroll_cb.isChecked()
         }
-
-
-# ---------- Git 推送工作线程 ----------
-class GitWorker(QThread):
-    log_signal = pyqtSignal(str)
-    done_signal = pyqtSignal(bool, str)
-
-    def __init__(self, repo_dir, commit_msg, push_remote, push_branch):
-        super().__init__()
-        self.repo_dir = repo_dir
-        self.commit_msg = commit_msg
-        self.push_remote = push_remote
-        self.push_branch = push_branch
-
-    def _run_cmd(self, cmd):
-        """执行命令，实时返回输出行"""
-        self.log_signal.emit(f"<span style='color:#66bb6a'>$ {' '.join(cmd)}</span>")
-        try:
-            proc = subprocess.Popen(
-                cmd,
-                cwd=self.repo_dir,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
-            )
-            for line in proc.stdout:
-                line = line.rstrip()
-                if line:
-                    self.log_signal.emit(line)
-            proc.wait()
-            return proc.returncode
-        except FileNotFoundError:
-            self.log_signal.emit("<span style='color:#ef9a9a'>错误: 未找到 git 命令，请确认 Git 已安装并加入 PATH</span>")
-            return -1
-
-    def run(self):
-        self.log_signal.emit("<b>===== 开始 Git 推送流程 =====</b>")
-
-        # git add .
-        rc = self._run_cmd(["git", "add", "."])
-        if rc != 0:
-            self.done_signal.emit(False, "git add 失败")
-            return
-
-        # git status --short（展示将提交的内容）
-        self._run_cmd(["git", "status", "--short"])
-
-        # git commit
-        rc = self._run_cmd(["git", "commit", "-m", self.commit_msg])
-        if rc not in (0, 1):   # 1 = nothing to commit，视为正常
-            self.done_signal.emit(False, "git commit 失败")
-            return
-
-        # git push
-        push_cmd = ["git", "push", self.push_remote, self.push_branch]
-        rc = self._run_cmd(push_cmd)
-        if rc != 0:
-            self.done_signal.emit(False, "git push 失败，请检查网络或远端配置")
-            return
-
-        self.done_signal.emit(True, "✅ 推送成功！")
-
-
-# ---------- Git 推送页面 ----------
-class GitPushWidget(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.worker = None
-        self.init_ui()
-
-    def init_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setSpacing(12)
-
-        # 标题
-        title = QLabel("🚀 Git 推送到 GitHub")
-        title.setStyleSheet("font-size: 15px; font-weight: bold; padding: 4px 0;")
-        layout.addWidget(title)
-
-        # 配置区
-        config_group = QGroupBox("推送配置")
-        config_form = QFormLayout(config_group)
-
-        self.remote_edit = QLineEdit("origin")
-        self.branch_edit = QLineEdit("main")
-        self.commit_edit = QLineEdit()
-        self.commit_edit.setPlaceholderText("更新内容描述，留空则使用自动时间戳")
-
-        config_form.addRow("远端(remote):", self.remote_edit)
-        config_form.addRow("分支(branch):", self.branch_edit)
-        config_form.addRow("Commit 信息:", self.commit_edit)
-        layout.addWidget(config_group)
-
-        # 按钮行
-        btn_row = QHBoxLayout()
-        self.push_btn = QPushButton("🚀 一键推送")
-        self.push_btn.setMinimumHeight(36)
-        self.push_btn.clicked.connect(self.do_push)
-        self.clear_btn = QPushButton("🧹 清空日志")
-        self.clear_btn.clicked.connect(self.clear_log)
-        btn_row.addWidget(self.push_btn)
-        btn_row.addWidget(self.clear_btn)
-        btn_row.addStretch()
-        layout.addLayout(btn_row)
-
-        # 日志输出
-        log_group = QGroupBox("执行日志")
-        log_layout = QVBoxLayout(log_group)
-        self.log_output = QTextBrowser()
-        self.log_output.setMinimumHeight(300)
-        self.log_output.setStyleSheet(
-            "font-family: 'Consolas','Courier New',monospace; font-size: 12px;"
-            "background:#0d1a0d; color:#c5e1a5; border-radius:8px; padding:8px;"
-        )
-        self.log_output.setOpenExternalLinks(False)
-        log_layout.addWidget(self.log_output)
-        layout.addWidget(log_group)
-
-    def do_push(self):
-        commit_msg = self.commit_edit.text().strip()
-        if not commit_msg:
-            commit_msg = f"update: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-
-        remote = self.remote_edit.text().strip() or "origin"
-        branch = self.branch_edit.text().strip() or "main"
-
-        self.push_btn.setEnabled(False)
-        self.push_btn.setText("⏳ 推送中...")
-
-        self.worker = GitWorker(BASE_DIR, commit_msg, remote, branch)
-        self.worker.log_signal.connect(self.append_log)
-        self.worker.done_signal.connect(self.on_done)
-        self.worker.start()
-
-    def append_log(self, text):
-        self.log_output.append(text)
-        # 滚动到底
-        sb = self.log_output.verticalScrollBar()
-        sb.setValue(sb.maximum())
-
-    def on_done(self, success, msg):
-        color = "#a5d6a7" if success else "#ef9a9a"
-        self.append_log(f"<br><b><span style='color:{color}'>{msg}</span></b>")
-        self.push_btn.setEnabled(True)
-        self.push_btn.setText("🚀 一键推送")
-
-    def clear_log(self):
-        self.log_output.clear()
 
 
 # ---------- 主窗口 ----------
@@ -1177,30 +1226,29 @@ class CyberMainWindow(QMainWindow):
         QMessageBox.information(self, "成功", "设置已保存并应用")
 
     def init_ui(self):
-        self.setWindowTitle("赛博内容管理工具 · 主题定制版")
+        self.setWindowTitle("赛博内容管理工具 · 高级紧凑版")
         self.setGeometry(100, 100, self.config["window_width"], self.config["window_height"])
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
+        layout.setContentsMargins(6, 6, 6, 6)
+        layout.setSpacing(6)
 
         title = QLabel("⚡ 赛博枢纽管理终端 ⚡")
         title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("font-size: 18px; font-weight: bold; padding: 10px;")
+        title.setStyleSheet("font-size: 18px; font-weight: bold; padding: 6px;")
         layout.addWidget(title)
 
         self.tab_widget = QTabWidget()
         self.article_tab = ArticleManager()
         self.download_tab = DownloadManager()
-        self.git_tab = GitPushWidget()
         self.settings_widget = SettingsWidget(self)
         self.tab_widget.addTab(self.article_tab, "📚 文章管理")
         self.tab_widget.addTab(self.download_tab, "📦 下载管理")
-        self.tab_widget.addTab(self.git_tab, "🚀 Git 推送")
         self.tab_widget.addTab(self.settings_widget, "⚙️ 设置")
         layout.addWidget(self.tab_widget)
 
         self.settings_widget.load_config(self.config)
-
         self.status_label = QLabel("就绪")
         self.statusBar().addWidget(self.status_label)
 

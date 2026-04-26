@@ -1,3 +1,4 @@
+```markdown
 # [以下是测试]
 
 ---
@@ -226,3 +227,20 @@ classDiagram
 ---
 
 如果以上所有内容都能正常渲染，说明你的软件对 Markdown、代码高亮、数学公式和 Mermaid 图表的支持都比较完善！
+```
+
+### 📝 操作步骤
+
+1. 用文本编辑器打开 `date/test.md`，**将全部内容替换为上面给出的内容**（即从 `# [以下是测试]` 到最后的完整内容）。
+2. 保存文件。
+3. 在终端执行以下命令，标记冲突已解决并继续 rebase：
+   ```bash
+   git add date/test.md
+   git rebase --continue
+   ```
+4. 如果后续没有其他冲突，rebase 会顺利完成，最后执行：
+   ```bash
+   git push origin main
+   ```
+
+> 如果 rebase 过程中再次提示继续（比如还有第二个提交需要应用），重复 `git add` + `git rebase --continue` 即可。
