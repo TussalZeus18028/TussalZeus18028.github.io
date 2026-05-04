@@ -6,7 +6,17 @@
     <title>赛博枢纽 · 极客下载站 · 全量版 · 动态网格</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js 代码高亮 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- KaTeX 数学公式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <!-- Mermaid 图表 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         /* ===== CSS 变量（双主题）===== */
         :root {
@@ -596,8 +606,137 @@
                 if (container) container.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-triangle"></i> ${message}</div>`;
             }
             
-            // 文章阅读新窗口 - 跟随主站主题
-            function renderMarkdownInNewWindow(title, mdHtml) {
+            // ========== Markdown 预处理（保护 Mermaid + 公式不被 marked 破坏）==========
+            function preprocessMarkdown(mdText) {
+                const mermaidBlocks = [];
+                const mathBlocks = [];
+                let counter = 0;
+
+                // 1) 提取 ```mermaid ... ``` 代码块
+                let processed = mdText.replace(/```mermaid\n([\s\S]*?)```/g, (match, code) => {
+                    const id = `%%MERMAID_${counter}%%`;
+                    mermaidBlocks.push({ id, code: code.trim() });
+                    counter++;
+                    return id;
+                });
+
+                // 2) 提取 $$...$$ 块级公式（包含 \bmatrix 等 LaTeX 环境）
+                processed = processed.replace(/\$\$([\s\S]*?)\$\$/g, (match, formula) => {
+                    const id = `%%MATH_${counter}%%`;
+                    mathBlocks.push({ id, formula: formula.trim() });
+                    counter++;
+                    return id;
+                });
+
+                return { processed, mermaidBlocks, mathBlocks };
+            }
+
+            function restoreBlocks(html, mermaidBlocks, mathBlocks) {
+                // 恢复块级公式 → KaTeX 渲染的 HTML
+                for (const { id, formula } of mathBlocks) {
+                    try {
+                        const rendered = katex.renderToString(formula, { displayMode: true, throwOnError: false });
+                        html = html.replace(id, `<div class="katex-display">${rendered}</div>`);
+                    } catch(e) {
+                        html = html.replace(id, `<div class="katex-display"><code>${formula}</code></div>`);
+                    }
+                }
+
+                // 恢复 Mermaid → 占位容器（源码存在 textarea 中，避免 HTML 转义问题）
+                for (const { id, code } of mermaidBlocks) {
+                    const uid = 'mwrap_' + Math.random().toString(36).substr(2, 9);
+                    // 用 textarea 存储原始代码，避免 HTML 解析破坏特殊字符
+                    const escapedCode = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                    html = html.replace(id, `
+                        <div class="mermaid-wrapper" id="${uid}">
+                            <div class="mermaid-toolbar">
+                                <span class="mermaid-label"><i class="fas fa-project-diagram"></i> Mermaid</span>
+                                <div class="mermaid-btn-group">
+                                    <button class="mermaid-view-btn active" data-view="chart" onclick="switchMermaidView(this,'chart')">📊 图表</button>
+                                    <button class="mermaid-view-btn" data-view="code" onclick="switchMermaidView(this,'code')">📄 代码</button>
+                                </div>
+                            </div>
+                            <div class="mermaid-chart-view"></div>
+                            <div class="mermaid-code-view" style="display:none;">
+                                <pre class="mermaid-source-pre"><code class="language-mermaid">${escapedCode}</code></pre>
+                            </div>
+                            <textarea class="mermaid-src" style="display:none;">${code}</textarea>
+                        </div>
+                    `);
+                }
+
+                return html;
+            }
+
+            // Mermaid 视图切换函数（全局）
+            window.switchMermaidView = function(btn, view) {
+                const wrapper = btn.closest('.mermaid-wrapper');
+                const chartView = wrapper.querySelector('.mermaid-chart-view');
+                const codeView = wrapper.querySelector('.mermaid-code-view');
+                const btns = wrapper.querySelectorAll('.mermaid-view-btn');
+                if (view === 'chart') {
+                    chartView.style.display = '';
+                    codeView.style.display = 'none';
+                    btns.forEach(b => b.classList.remove('active'));
+                    btns[0].classList.add('active');
+                } else {
+                    chartView.style.display = 'none';
+                    codeView.style.display = '';
+                    btns.forEach(b => b.classList.remove('active'));
+                    btns[1].classList.add('active');
+                    codeView.querySelectorAll('pre code').forEach(b => {
+                        if (!b.classList.contains('hljs')) hljs.highlightElement(b);
+                    });
+                }
+            };
+
+            // 代码块后处理：添加语言标签 + 复制按钮
+            function enhanceCodeBlocks(container) {
+                container.querySelectorAll('pre').forEach(pre => {
+                    const code = pre.querySelector('code');
+                    if (!code) return;
+                    const langClass = [...code.classList].find(c => c.startsWith('language-'));
+                    const lang = langClass ? langClass.replace('language-', '') : '';
+                    if (pre.querySelector('.code-toolbar')) return; // 已处理
+
+                    // 包装 pre
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'code-block-wrapper';
+                    pre.parentNode.insertBefore(wrapper, pre);
+                    wrapper.appendChild(pre);
+
+                    // 工具栏
+                    const toolbar = document.createElement('div');
+                    toolbar.className = 'code-toolbar';
+                    if (lang) {
+                        const label = document.createElement('span');
+                        label.className = 'code-lang-label';
+                        label.textContent = lang;
+                        toolbar.appendChild(label);
+                    }
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'code-copy-btn';
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i> 复制';
+                    copyBtn.onclick = function() {
+                        const text = code.textContent;
+                        navigator.clipboard.writeText(text).then(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                            setTimeout(() => { copyBtn.innerHTML = '<i class="fas fa-copy"></i> 复制'; }, 2000);
+                        });
+                    };
+                    toolbar.appendChild(copyBtn);
+                    wrapper.insertBefore(toolbar, pre);
+                });
+            }
+
+            // 文章阅读新窗口 - 跟随主站主题（增强版）
+            function renderMarkdownInNewWindow(title, mdText) {
+                // 预处理：保护 mermaid 和公式不被 marked 破坏
+                const { processed, mermaidBlocks, mathBlocks } = preprocessMarkdown(mdText);
+                let html = marked.parse(processed);
+                // 恢复 mermaid 和公式块
+                html = restoreBlocks(html, mermaidBlocks, mathBlocks);
+
                 const isLight = document.body.classList.contains('light');
                 const themeClass = isLight ? 'light' : 'dark';
                 
@@ -608,6 +747,15 @@
                     <head><meta charset="UTF-8"><title>${title} · 赛博阅读</title>
                     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                    <!-- Highlight.js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"><\/script>
+                    <!-- KaTeX -->
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"><\/script>
+                    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"><\/script>
+                    <!-- Mermaid -->
+                    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"><\/script>
                     <style>
                         * { margin:0; padding:0; box-sizing:border-box; }
                         body {
@@ -615,120 +763,224 @@
                             padding: 2rem;
                             transition: background-color 0.2s, color 0.2s;
                         }
-                        body.dark {
-                            background: #0a0a0a;
-                            color: #e0e0e0;
-                        }
-                        body.light {
-                            background: #f3f3f3;
-                            color: #1b2f51;
-                        }
+                        body.dark { background: #0a0a0a; color: #e0e0e0; }
+                        body.light { background: #f3f3f3; color: #1b2f51; }
                         body::before {
-                            content: "";
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
+                            content: ""; position: fixed; top:0; left:0; width:100%; height:100%;
                             background-image: linear-gradient(var(--grid-color-light, #c6c6c6) 1px, transparent 1px),
                                               linear-gradient(90deg, var(--grid-color-light, #c6c6c6) 1px, transparent 1px);
-                            background-size: 80px 80px;
-                            opacity: 0.3;
-                            pointer-events: none;
+                            background-size: 80px 80px; opacity: 0.3; pointer-events: none;
                         }
                         body.dark::before {
                             --grid-color-light: #333;
-                            background-image: linear-gradient(#333 1px, transparent 1px),
-                                              linear-gradient(90deg, #333 1px, transparent 1px);
+                            background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
                         }
                         .cyber-container {
-                            max-width: 900px;
-                            margin: 0 auto;
-                            backdrop-filter: blur(12px);
-                            border-radius: 32px;
-                            padding: 2.5rem;
-                            box-shadow: 0 0 40px rgba(0,0,0,0.2);
+                            max-width: 900px; margin: 0 auto; backdrop-filter: blur(12px);
+                            border-radius: 32px; padding: 2.5rem; box-shadow: 0 0 40px rgba(0,0,0,0.2);
                             transition: background 0.2s, border-color 0.2s;
                         }
-                        body.dark .cyber-container {
-                            background: rgba(17, 17, 17, 0.92);
-                            border: 1px solid rgba(51, 51, 51, 0.6);
-                        }
-                        body.light .cyber-container {
-                            background: rgba(255, 240, 237, 0.92);
-                            border: 1px solid rgba(232, 232, 232, 0.9);
-                        }
-                        h1, h2, h3 {
-                            border-bottom: 1px solid;
-                            padding-bottom: 0.5rem;
-                            margin-top: 1.5rem;
-                        }
-                        body.dark h1, body.dark h2, body.dark h3 {
-                            color: #ffa300;
-                            border-bottom-color: rgba(255,163,0,0.4);
-                        }
-                        body.light h1, body.light h2, body.light h3 {
-                            color: #0052d9;
-                            border-bottom-color: #ffd8d2;
-                        }
+                        body.dark .cyber-container { background: rgba(17,17,17,0.92); border: 1px solid rgba(51,51,51,0.6); }
+                        body.light .cyber-container { background: rgba(255,240,237,0.92); border: 1px solid rgba(232,232,232,0.9); }
+                        h1, h2, h3 { border-bottom: 1px solid; padding-bottom: 0.5rem; margin-top: 1.5rem; }
+                        body.dark h1, body.dark h2, body.dark h3 { color: #ffa300; border-bottom-color: rgba(255,163,0,0.4); }
+                        body.light h1, body.light h2, body.light h3 { color: #0052d9; border-bottom-color: #ffd8d2; }
                         p { margin: 1.2rem 0; line-height: 1.7; }
                         body.dark p { color: #ccc; }
                         body.light p { color: #242424; }
                         code {
-                            padding: 0.2rem 0.5rem;
-                            border-radius: 8px;
-                            font-family: 'Space Mono', monospace;
+                            padding: 0.2rem 0.5rem; border-radius: 8px;
+                            font-family: 'Space Mono', monospace; font-size: 0.9em;
                         }
-                        body.dark code {
-                            background: #2a2a2a;
-                            color: #ff9285;
+                        body.dark code { background: #2a2a2a; color: #ff9285; }
+                        body.light code { background: #e3e9ff; color: #f6685d; }
+                        pre { padding: 1.5rem; border-radius: 0 0 20px 20px; overflow-x: auto; margin: 0; }
+                        body.dark pre { background: #1a1a1a; border: 1px solid #333; border-top: none; }
+                        body.light pre { background: #fff0ed; border: 1px solid #ffd8d2; border-top: none; }
+                        pre code { padding: 0; border-radius: 0; background: transparent; color: inherit; }
+                        /* 代码块包装器 + 工具栏 */
+                        .code-block-wrapper { margin: 1.5rem 0; border-radius: 20px; overflow: hidden; }
+                        body.dark .code-block-wrapper { border: 1px solid #333; }
+                        body.light .code-block-wrapper { border: 1px solid #ffd8d2; }
+                        .code-toolbar {
+                            display: flex; justify-content: space-between; align-items: center;
+                            padding: 0.4rem 1rem; font-size: 0.8rem;
                         }
-                        body.light code {
-                            background: #e3e9ff;
-                            color: #f6685d;
+                        body.dark .code-toolbar { background: #222; }
+                        body.light .code-toolbar { background: #ffe8e0; }
+                        .code-lang-label {
+                            font-family: 'Space Mono', monospace; font-weight: 600;
+                            text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;
                         }
-                        pre {
-                            padding: 1.5rem;
-                            border-radius: 20px;
-                            overflow-x: auto;
-                            margin: 1.5rem 0;
+                        body.dark .code-lang-label { color: #ffa300; }
+                        body.light .code-lang-label { color: #0052d9; }
+                        .code-copy-btn {
+                            background: transparent; border: 1px solid; cursor: pointer;
+                            padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.78rem;
+                            font-family: 'Inter', sans-serif; transition: all 0.2s;
                         }
-                        body.dark pre {
-                            background: #1a1a1a;
-                            border: 1px solid #333;
-                        }
-                        body.light pre {
-                            background: #fff0ed;
-                            border: 1px solid #ffd8d2;
-                        }
+                        body.dark .code-copy-btn { color: #ffa300; border-color: #444; }
+                        body.dark .code-copy-btn:hover { background: #ffa300; color: #000; }
+                        body.light .code-copy-btn { color: #0052d9; border-color: #ccc; }
+                        body.light .code-copy-btn:hover { background: #0052d9; color: #fff; }
                         .header-glow {
-                            text-align: center;
-                            margin-bottom: 2rem;
-                            font-family: 'Space Mono', monospace;
-                            text-transform: uppercase;
-                            letter-spacing: 4px;
-                            font-size: 0.9rem;
+                            text-align: center; margin-bottom: 2rem;
+                            font-family: 'Space Mono', monospace; text-transform: uppercase;
+                            letter-spacing: 4px; font-size: 0.9rem;
                         }
                         body.dark .header-glow { color: #ffa300; }
                         body.light .header-glow { color: #0052d9; }
-                        blockquote {
-                            border-left: 4px solid;
-                            padding-left: 1rem;
-                            margin: 1rem 0;
-                            font-style: italic;
-                        }
-                        body.dark blockquote { border-left-color: #ffa300; color: #aaa; }
-                        body.light blockquote { border-left-color: #0052d9; color: #555; }
+                        blockquote { border-left: 4px solid; padding: 0.8rem 1.2rem; margin: 1rem 0; font-style: italic; border-radius: 0 12px 12px 0; }
+                        body.dark blockquote { border-left-color: #ffa300; color: #aaa; background: rgba(255,163,0,0.05); }
+                        body.light blockquote { border-left-color: #0052d9; color: #555; background: rgba(0,82,217,0.05); }
                         a { color: inherit; text-decoration: underline; }
                         body.dark a { color: #ffa300; }
                         body.light a { color: #0052d9; }
+                        img { max-width: 100%; border-radius: 16px; margin: 1rem 0; }
+                        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; border-radius: 16px; overflow: hidden; }
+                        th, td { padding: 0.8rem 1rem; text-align: left; border: 1px solid; }
+                        body.dark th { background: #1e1e1e; border-color: #333; color: #ffa300; }
+                        body.dark td { border-color: #333; }
+                        body.light th { background: #e8e8e8; border-color: #ccc; color: #0052d9; }
+                        body.light td { border-color: #ccc; }
+                        tr:hover td { opacity: 0.85; }
+                        ul li { list-style: none; margin: 0.3rem 0; }
+                        ul li input[type="checkbox"] { margin-right: 0.6rem; accent-color: currentColor; }
+                        del { opacity: 0.6; }
+                        hr { border: none; height: 2px; margin: 2rem 0; }
+                        body.dark hr { background: linear-gradient(90deg, transparent, #ffa300, transparent); }
+                        body.light hr { background: linear-gradient(90deg, transparent, #0052d9, transparent); }
+                        /* Mermaid 图表 */
+                        .mermaid-wrapper {
+                            margin: 1.5rem 0; border-radius: 16px; overflow: hidden;
+                            border: 1px solid;
+                        }
+                        body.dark .mermaid-wrapper { border-color: #333; }
+                        body.light .mermaid-wrapper { border-color: #ccc; }
+                        .mermaid-toolbar {
+                            display: flex; justify-content: space-between; align-items: center;
+                            padding: 0.4rem 1rem; font-size: 0.85rem;
+                        }
+                        body.dark .mermaid-toolbar { background: #1e1e1e; }
+                        body.light .mermaid-toolbar { background: #e8e8e8; }
+                        .mermaid-label { font-weight: 600; }
+                        body.dark .mermaid-label { color: #ffa300; }
+                        body.light .mermaid-label { color: #0052d9; }
+                        .mermaid-toggle-btn {
+                            background: transparent; border: 1px solid; cursor: pointer;
+                            padding: 0.2rem 0.7rem; border-radius: 6px; font-size: 0.8rem;
+                            font-family: 'Inter', sans-serif; transition: all 0.2s;
+                        }
+                        body.dark .mermaid-toggle-btn { color: #ffa300; border-color: #444; }
+                        body.dark .mermaid-toggle-btn:hover { background: #ffa300; color: #000; }
+                        body.light .mermaid-toggle-btn { color: #0052d9; border-color: #ccc; }
+                        body.light .mermaid-toggle-btn:hover { background: #0052d9; color: #fff; }
+                        .mermaid-btn-group { display: flex; gap: 4px; }
+                        .mermaid-view-btn {
+                            background: transparent; border: 1px solid; border-radius: 6px;
+                            padding: 0.2rem 0.7rem; font-size: 0.8rem; cursor: pointer;
+                            font-family: 'Inter', sans-serif; transition: all 0.2s;
+                        }
+                        body.dark .mermaid-view-btn { color: #ffa300; border-color: #444; }
+                        body.dark .mermaid-view-btn:hover { background: #ffa300; color: #000; }
+                        body.dark .mermaid-view-btn.active { background: rgba(255,163,0,0.15); font-weight: 600; box-shadow: 0 0 8px rgba(255,163,0,0.2); }
+                        body.light .mermaid-view-btn { color: #0052d9; border-color: #ccc; }
+                        body.light .mermaid-view-btn:hover { background: #0052d9; color: #fff; }
+                        body.light .mermaid-view-btn.active { background: rgba(0,82,217,0.12); font-weight: 600; box-shadow: 0 0 8px rgba(0,82,217,0.15); }
+                        .mermaid-chart-view {
+                            background: rgba(128,128,128,0.08); padding: 1.5rem;
+                            text-align: center; overflow-x: auto;
+                        }
+                        body.dark .mermaid-chart-view { background: rgba(255,163,0,0.05); }
+                        body.light .mermaid-chart-view { background: rgba(0,82,217,0.04); }
+                        .mermaid-code-view { padding: 0; }
+                        .mermaid-code-view pre { border-radius: 0; margin: 0; }
+                        .mermaid { background: transparent !important; padding: 0 !important; margin: 0 !important; }
+                        /* KaTeX 公式 */
+                        .katex-display { margin: 1.5rem 0; overflow-x: auto; overflow-y: hidden; }
                     </style>
                     </head>
                     <body class="${themeClass}">
                         <div class="cyber-container">
                             <div class="header-glow"><i class="fas fa-brain"></i> NEURAL INTERFACE <i class="fas fa-microchip"></i></div>
-                            ${mdHtml}
+                            ${html}
                         </div>
+                        <script>
+                            // ========== 初始化流程 ==========
+                            (async function() {
+                                // 1) 先初始化 Mermaid
+                                mermaid.initialize({
+                                    startOnLoad: false,
+                                    theme: document.body.classList.contains('light') ? 'default' : 'dark',
+                                    securityLevel: 'loose'
+                                });
+
+                                // 2) 渲染所有 Mermaid 图表（DOM API，串行 await）
+                                const wrappers = document.querySelectorAll('.mermaid-wrapper');
+                                for (let i = 0; i < wrappers.length; i++) {
+                                    const wrapper = wrappers[i];
+                                    const textarea = wrapper.querySelector('textarea.mermaid-src');
+                                    const code = textarea ? textarea.value.trim() : '';
+                                    if (!code) continue;
+                                    const chartView = wrapper.querySelector('.mermaid-chart-view');
+                                    const uid = 'm_' + Date.now() + '_' + i;
+                                    try {
+                                        const { svg } = await mermaid.render(uid, code);
+                                        chartView.innerHTML = svg;
+                                    } catch(e) {
+                                        chartView.innerHTML = '<div style="color:#ff9285;padding:1rem;font-family:monospace;">Mermaid 渲染失败: ' + e.message + '</div>';
+                                    }
+                                    // 渲染完成后移除 textarea，释放 DOM
+                                    if (textarea) textarea.remove();
+                                }
+
+                                // 3) 代码高亮（跳过 mermaid 容器内的代码）
+                                document.querySelectorAll('pre:not(.mermaid) code').forEach(block => {
+                                    hljs.highlightElement(block);
+                                });
+
+                                // 4) 行内公式渲染（$...$）
+                                renderMathInElement(document.body, {
+                                    delimiters: [
+                                        {left: '$$', right: '$$', display: true},
+                                        {left: '$', right: '$', display: false}
+                                    ],
+                                    throwOnError: false
+                                });
+
+                                // 5) 增强代码块：添加语言标签 + 复制按钮
+                                document.querySelectorAll('pre').forEach(pre => {
+                                    const code = pre.querySelector('code');
+                                    if (!code || pre.closest('.mermaid-wrapper')) return;
+                                    const langClass = [...code.classList].find(c => c.startsWith('language-'));
+                                    const lang = langClass ? langClass.replace('language-', '') : '';
+                                    if (pre.querySelector('.code-toolbar')) return;
+                                    const wrapper = document.createElement('div');
+                                    wrapper.className = 'code-block-wrapper';
+                                    pre.parentNode.insertBefore(wrapper, pre);
+                                    wrapper.appendChild(pre);
+                                    const toolbar = document.createElement('div');
+                                    toolbar.className = 'code-toolbar';
+                                    if (lang) {
+                                        const label = document.createElement('span');
+                                        label.className = 'code-lang-label';
+                                        label.textContent = lang;
+                                        toolbar.appendChild(label);
+                                    }
+                                    const copyBtn = document.createElement('button');
+                                    copyBtn.className = 'code-copy-btn';
+                                    copyBtn.innerHTML = '<i class="fas fa-copy"></i> 复制';
+                                    copyBtn.onclick = function() {
+                                        navigator.clipboard.writeText(code.textContent).then(() => {
+                                            copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                                            setTimeout(() => { copyBtn.innerHTML = '<i class="fas fa-copy"></i> 复制'; }, 2000);
+                                        });
+                                    };
+                                    toolbar.appendChild(copyBtn);
+                                    wrapper.insertBefore(toolbar, pre);
+                                });
+                            })();
+                        <\/script>
                     </body>
                     </html>
                 `);
@@ -791,8 +1043,8 @@
                                 const mdResp = await fetch(`date/${filename}`);
                                 if (!mdResp.ok) { alert('读取失败'); return; }
                                 const mdText = await mdResp.text();
-                                const html = marked.parse(mdText);
-                                renderMarkdownInNewWindow(title, html);
+                                // 传递原始 markdown 文本，由 renderMarkdownInNewWindow 内部预处理
+                                renderMarkdownInNewWindow(title, mdText);
                             } catch (err) { alert('加载失败: ' + err.message); }
                         });
                     });

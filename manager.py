@@ -16,12 +16,19 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal, QThread
 from PyQt5.QtGui import QFont, QColor, QIcon
+from PyQt5.QtCore import QUrl
 
 try:
     import markdown
     MARKDOWN_AVAILABLE = True
 except ImportError:
     MARKDOWN_AVAILABLE = False
+
+try:
+    from PyQt5.QtWebEngineWidgets import QWebEngineView
+    WEBENGINE_AVAILABLE = True
+except ImportError:
+    WEBENGINE_AVAILABLE = False
 
 # ---------- 配置 ----------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -534,9 +541,18 @@ class ArticleManager(QWidget):
 
         self.md_edit = QTextEdit()
         self.md_edit.setPlaceholderText("Markdown 内容...")
-        self.preview = QTextBrowser() if MARKDOWN_AVAILABLE else None
-        if self.preview:
+
+        # 预览区：优先使用 QWebEngineView（支持代码高亮/公式/Mermaid），否则用 QTextBrowser
+        if WEBENGINE_AVAILABLE:
+            self.preview = QWebEngineView()
+            self._preview_mode = "webengine"
+        elif MARKDOWN_AVAILABLE:
+            self.preview = QTextBrowser()
             self.preview.setOpenExternalLinks(True)
+            self._preview_mode = "textbrowser"
+        else:
+            self.preview = None
+            self._preview_mode = "none"
 
         btn_bar = QHBoxLayout()
         btn_save = QPushButton("💾 保存")
@@ -548,7 +564,7 @@ class ArticleManager(QWidget):
             btn_preview.clicked.connect(self.preview_markdown)
         else:
             btn_preview.clicked.connect(
-                lambda: QMessageBox.warning(self, "缺少依赖", "请先安装 markdown 库：\npip install markdown")
+                lambda: QMessageBox.warning(self, "缺少依赖", "请安装依赖库：\npip install markdown PyQtWebEngine")
             )
         btn_bar.addWidget(btn_save)
         btn_bar.addWidget(btn_delete)
@@ -557,12 +573,11 @@ class ArticleManager(QWidget):
 
         right_layout.addWidget(form)
         right_layout.addWidget(QLabel("📝 Markdown 内容:"))
-        # 编辑器 + 预览区用 splitter 分割（md_edit 只放一次）
         if self.preview:
             splitter = QSplitter(Qt.Vertical)
             splitter.addWidget(self.md_edit)
             splitter.addWidget(self.preview)
-            splitter.setSizes([300, 200])
+            splitter.setSizes([300, 300])
             right_layout.addWidget(splitter)
         else:
             right_layout.addWidget(self.md_edit)
@@ -675,23 +690,255 @@ class ArticleManager(QWidget):
         if not self.preview:
             return
         md_text = self.md_edit.toPlainText()
-        if not MARKDOWN_AVAILABLE:
-            self.preview.setPlainText("请安装 markdown 库: pip install markdown")
+        if not md_text.strip():
+            if self._preview_mode == "webengine":
+                self.preview.setHtml(self._empty_preview_html(), QUrl())
+            else:
+                self.preview.clear()
             return
-        try:
-            html = markdown.markdown(md_text, extensions=['extra', 'codehilite'])
+
+        if self._preview_mode == "webengine":
+            # 使用 WebEngine 渲染：加载 CDN，支持代码高亮 + KaTeX 公式 + Mermaid + 代码增强
+            import html as html_mod
+            escaped_md = html_mod.escape(md_text)
+            # </script> 关闭标签拼接，避免 Python 转义问题
+            _sc = "</scr" + "ipt>"
+            _sco = '<script src="'  # script open tag prefix
+
+            full_html = f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+{_sco}https://cdn.jsdelivr.net/npm/marked/marked.min.js">{_sc}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+{_sco}https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js">{_sc}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+{_sco}https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js">{_sc}
+{_sco}https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js">{_sc}
+{_sco}https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js">{_sc}
+<style>
+  * {{ margin:0; padding:0; box-sizing:border-box; }}
+  body {{ font-family: 'Segoe UI', sans-serif; background: #0d1a0d; color: #c5e1a5; padding: 20px; font-size: 14px; }}
+  h1,h2,h3 {{ color: #4CAF50; border-bottom: 1px solid #2e4a2e; padding-bottom: 0.4rem; margin-top: 1.5rem; }}
+  p {{ margin: 1rem 0; line-height: 1.7; }}
+  code {{ background: #1a2e1a; padding: 2px 6px; border-radius: 6px; color: #81c784; font-family: 'Consolas', monospace; font-size: 0.9em; }}
+  pre {{ background: #111; padding: 14px; border-radius: 0 0 12px 12px; border: 1px solid #2e4a2e; border-top: none; overflow-x: auto; margin: 0; }}
+  pre code {{ background: transparent; padding: 0; color: inherit; }}
+  .code-block-wrapper {{ margin: 1rem 0; border-radius: 12px; overflow: hidden; border: 1px solid #2e4a2e; }}
+  .code-toolbar {{ display:flex; justify-content:space-between; align-items:center; padding: 0.3rem 0.8rem; font-size: 0.8rem; background: #1a2e1a; }}
+  .code-lang-label {{ font-family: 'Consolas', monospace; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; color: #4CAF50; }}
+  .code-copy-btn {{ background: transparent; border: 1px solid #2e4a2e; color: #4CAF50; cursor: pointer; padding: 0.15rem 0.5rem; border-radius: 5px; font-size: 0.75rem; }}
+  .code-copy-btn:hover {{ background: #4CAF50; color: #000; }}
+  blockquote {{ border-left: 4px solid #4CAF50; padding: 0.8rem 1.2rem; color: #a5d6a7; background: rgba(76,175,80,0.05); border-radius: 0 12px 12px 0; font-style: italic; margin: 1rem 0; }}
+  a {{ color: #66bb6a; }}
+  table {{ width: 100%; border-collapse: collapse; margin: 1rem 0; border-radius: 12px; overflow: hidden; }}
+  th {{ background: #1a2e1a; color: #4CAF50; padding: 10px; text-align: left; border: 1px solid #2e4a2e; }}
+  td {{ padding: 10px; border: 1px solid #2e4a2e; }}
+  tr:hover td {{ background: rgba(76,175,80,0.08); }}
+  ul li {{ list-style: none; margin: 0.3rem 0; }}
+  ul li input[type="checkbox"] {{ margin-right: 0.5rem; accent-color: #4CAF50; }}
+  del {{ opacity: 0.6; }}
+  hr {{ border: none; height: 2px; background: linear-gradient(90deg, transparent, #4CAF50, transparent); margin: 2rem 0; }}
+  .mermaid-wrapper {{ margin: 1rem 0; border-radius: 12px; overflow: hidden; border: 1px solid #2e4a2e; }}
+  .mermaid-toolbar {{ display:flex; justify-content:space-between; align-items:center; padding: 0.3rem 0.8rem; font-size: 0.85rem; background: #1a2e1a; }}
+  .mermaid-label {{ font-weight: 600; color: #4CAF50; }}
+  .mermaid-toggle-btn {{ background: transparent; border: 1px solid #2e4a2e; color: #4CAF50; cursor: pointer; padding: 0.15rem 0.6rem; border-radius: 5px; font-size: 0.78rem; }}
+  .mermaid-toggle-btn:hover {{ background: #4CAF50; color: #000; }}
+  .mermaid-btn-group {{ display:flex; gap:4px; }}
+  .mermaid-view-btn {{ background: transparent; border: 1px solid #2e4a2e; color: #4CAF50; cursor: pointer; padding: 0.15rem 0.6rem; border-radius: 5px; font-size: 0.78rem; }}
+  .mermaid-view-btn:hover {{ background: #4CAF50; color: #000; }}
+  .mermaid-view-btn.active {{ background: rgba(76,175,80,0.15); font-weight: 600; }}
+  .mermaid-chart-view {{ background: rgba(76,175,80,0.06); padding: 1.2rem; text-align: center; overflow-x: auto; }}
+  .mermaid-code-view {{ padding: 0; }}
+  .mermaid-code-view pre {{ border-radius: 0; margin: 0; }}
+  .mermaid {{ background: transparent !important; padding: 0 !important; margin: 0 !important; }}
+  .katex-display {{ margin: 1rem 0; overflow-x: auto; overflow-y: hidden; }}
+  img {{ max-width: 100%; border-radius: 12px; }}
+</style>
+</head><body>
+<div id="content"></div>
+<script id="md-source" type="text/markdown">{escaped_md}</script>
+<script>
+  // 预处理：保护 Mermaid 和公式不被 marked 破坏
+  function preprocessMarkdown(md) {{
+    const mermaidBlocks = [];
+    const mathBlocks = [];
+    let counter = 0;
+    let processed = md.replace(/```mermaid\\n([\\s\\S]*?)```/g, (m, code) => {{
+      const id = `%%MERMAID_${{counter}}%%`;
+      mermaidBlocks.push({{ id, code: code.trim() }});
+      counter++;
+      return id;
+    }});
+    processed = processed.replace(/\\$\\$([\\s\\S]*?)\\$\\$/g, (m, formula) => {{
+      const id = `%%MATH_${{counter}}%%`;
+      mathBlocks.push({{ id, formula: formula.trim() }});
+      counter++;
+      return id;
+    }});
+    return {{ processed, mermaidBlocks, mathBlocks }};
+  }}
+
+  function restoreBlocks(html, mermaidBlocks, mathBlocks) {{
+    for (const {{ id, formula }} of mathBlocks) {{
+      try {{
+        const rendered = katex.renderToString(formula, {{ displayMode: true, throwOnError: false }});
+        html = html.replace(id, `<div class="katex-display">${{rendered}}</div>`);
+      }} catch(e) {{
+        html = html.replace(id, `<div class="katex-display"><code>${{formula}}</code></div>`);
+      }}
+    }}
+    for (const {{ id, code }} of mermaidBlocks) {{
+      const uid = 'mwrap_' + Math.random().toString(36).substr(2, 9);
+      const esc = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      html = html.replace(id, `
+        <div class="mermaid-wrapper" id="${{uid}}">
+          <div class="mermaid-toolbar">
+            <span class="mermaid-label">Mermaid</span>
+            <div class="mermaid-btn-group">
+              <button class="mermaid-view-btn active" onclick="switchMermaidView(this,'chart')">Chart</button>
+              <button class="mermaid-view-btn" onclick="switchMermaidView(this,'code')">Code</button>
+            </div>
+          </div>
+          <div class="mermaid-chart-view"></div>
+          <div class="mermaid-code-view" style="display:none;">
+            <pre class="mermaid-source-pre"><code class="language-mermaid">${{esc}}</code></pre>
+          </div>
+          <textarea class="mermaid-src" style="display:none;">${{code}}</textarea>
+        </div>
+      `);
+    }}
+    return html;
+  }}
+
+  window.switchMermaidView = function(btn, view) {{
+    const wrapper = btn.closest('.mermaid-wrapper');
+    const chartView = wrapper.querySelector('.mermaid-chart-view');
+    const codeView = wrapper.querySelector('.mermaid-code-view');
+    const btns = wrapper.querySelectorAll('.mermaid-view-btn');
+    if (view === 'chart') {{
+      chartView.style.display = '';
+      codeView.style.display = 'none';
+      btns.forEach(b => b.classList.remove('active'));
+      btns[0].classList.add('active');
+    }} else {{
+      chartView.style.display = 'none';
+      codeView.style.display = '';
+      btns.forEach(b => b.classList.remove('active'));
+      btns[1].classList.add('active');
+      codeView.querySelectorAll('pre code').forEach(b => {{
+        if (!b.classList.contains('hljs')) hljs.highlightElement(b);
+      }});
+    }}
+  }};
+
+  // 渲染 Markdown → HTML
+  const mdSrc = document.getElementById('md-source').textContent;
+  const {{ processed, mermaidBlocks, mathBlocks }} = preprocessMarkdown(mdSrc);
+  let html = marked.parse(processed);
+  html = restoreBlocks(html, mermaidBlocks, mathBlocks);
+  document.getElementById('content').innerHTML = html;
+
+  // ⚠️ 执行顺序很重要！
+  // 1) 先初始化 Mermaid
+  mermaid.initialize({{ startOnLoad: false, theme: 'dark', securityLevel: 'loose' }});
+
+  // 2) 渲染所有 Mermaid 图表（DOM API，串行 await，从 textarea 读取源码）
+  (async function() {{
+    const wrappers = document.querySelectorAll('.mermaid-wrapper');
+    for (let i = 0; i < wrappers.length; i++) {{
+      const wrapper = wrappers[i];
+      const textarea = wrapper.querySelector('textarea.mermaid-src');
+      const code = textarea ? textarea.value.trim() : '';
+      if (!code) continue;
+      const chartView = wrapper.querySelector('.mermaid-chart-view');
+      const uid = 'm_' + Date.now() + '_' + i;
+      try {{
+        const {{ svg }} = await mermaid.render(uid, code);
+        chartView.innerHTML = svg;
+      }} catch(e) {{
+        chartView.innerHTML = '<div style="color:#ff9285;padding:1rem;font-family:monospace;">Mermaid render failed: ' + e.message + '</div>';
+      }}
+      if (textarea) textarea.remove();
+    }}
+
+    // 3) 代码高亮（跳过 mermaid 容器内的代码）
+    document.querySelectorAll('pre:not(.mermaid) code').forEach(block => hljs.highlightElement(block));
+
+    // 4) 行内公式渲染（$...$）
+    renderMathInElement(document.body, {{
+      delimiters: [
+        {{left: '$$', right: '$$', display: true}},
+        {{left: '$', right: '$', display: false}}
+      ],
+      throwOnError: false
+    }});
+
+    // 5) 增强代码块：添加语言标签 + 复制按钮
+    document.querySelectorAll('pre').forEach(pre => {{
+      const code = pre.querySelector('code');
+      if (!code || pre.closest('.mermaid-wrapper')) return;
+      const langClass = [...code.classList].find(c => c.startsWith('language-'));
+      const lang = langClass ? langClass.replace('language-', '') : '';
+      if (pre.querySelector('.code-toolbar')) return;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-wrapper';
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+      const toolbar = document.createElement('div');
+      toolbar.className = 'code-toolbar';
+      if (lang) {{
+        const label = document.createElement('span');
+        label.className = 'code-lang-label';
+        label.textContent = lang;
+        toolbar.appendChild(label);
+      }}
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'code-copy-btn';
+      copyBtn.innerHTML = '<i class="fas fa-copy"></i> 复制';
+      copyBtn.onclick = function() {{
+        navigator.clipboard.writeText(code.textContent).then(() => {{
+          copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+          setTimeout(() => {{ copyBtn.innerHTML = '<i class="fas fa-copy"></i> 复制'; }}, 2000);
+        }});
+      }};
+      toolbar.appendChild(copyBtn);
+      wrapper.insertBefore(toolbar, pre);
+    }});
+  }})();
+{_sc}
+</body></html>"""
+            self.preview.setHtml(full_html, QUrl())
+
+        elif self._preview_mode == "textbrowser" and MARKDOWN_AVAILABLE:
+            # Fallback: 纯 Markdown 渲染（无公式/Mermaid 支持）
+            html = markdown.markdown(md_text, extensions=['extra', 'codehilite', 'tables', 'fenced_code'])
             style = """
             <style>
-                body { font-family: 'Segoe UI', monospace; background: #0d1a0d; color: #ccc; padding: 20px; }
-                h1,h2,h3 { color: #4CAF50; }
+                body { font-family: 'Segoe UI', monospace; background: #0d1a0d; color: #c5e1a5; padding: 20px; font-size: 14px; }
+                h1,h2,h3 { color: #4CAF50; border-bottom: 1px solid #2e4a2e; }
                 code { background: #1a2e1a; padding: 2px 6px; border-radius: 6px; color: #81c784; }
-                pre { background: #111; padding: 12px; border-radius: 12px; border: 1px solid #2e4a2e; }
+                pre { background: #111; padding: 14px; border-radius: 12px; border: 1px solid #2e4a2e; }
                 a { color: #66bb6a; }
+                table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+                th, td { border: 1px solid #2e4a2e; padding: 8px; }
+                th { background: #1a2e1a; color: #4CAF50; }
+                blockquote { border-left: 4px solid #4CAF50; padding-left: 1rem; color: #a5d6a7; }
             </style>
             """
             self.preview.setHtml(style + html)
-        except Exception as e:
-            self.preview.setPlainText(f"预览错误: {e}")
+
+    def _empty_preview_html(self):
+        return """<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0d1a0d; color: #2e4a2e;
+         padding: 60px 20px; text-align: center; font-size: 16px; }
+  .hint { color: #4CAF50; font-size: 48px; margin-bottom: 16px; }
+</style></head><body>
+  <div class="hint">📝</div>
+  <div>在上方编辑 Markdown，点击「预览」查看效果</div>
+  <div style="margin-top:12px;font-size:13px;color:#555;">
+    代码高亮 · 数学公式 · Mermaid 图表 · 复制按钮 · 视图切换
+  </div>
+</body></html>"""
 
 
 # ---------- 下载管理组件 ----------
